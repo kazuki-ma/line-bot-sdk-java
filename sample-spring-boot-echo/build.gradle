@@ -16,6 +16,22 @@
 
 apply plugin: 'org.springframework.boot'
 
+springBoot {
+    excludeDevtools = true // fat jar にまとめたときには、devtools を取り除く
+}
+
+repositories {
+    maven { url "https://dl.bintray.com/ylemoigne/maven" }
+}
+
 dependencies {
     compile project(':line-bot-spring-boot')
+    compile 'com.codeborne:selenide:4.0'
+    compile 'com.squareup.retrofit2:adapter-java8:2.1.0'
+    compile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.50.5'
+    compile 'fr.javatic.mongo:mongo-jackson-codec:3.2.2__0.5'
+    compile 'org.jsoup:jsoup:1.7.3'
+    compile 'org.springframework.boot:spring-boot-devtools'
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }

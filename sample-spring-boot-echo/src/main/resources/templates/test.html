@@ -1,0 +1,76 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" type="text/css"
+        href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      border-color: rgb(151, 151, 151);
+    }
+
+    p {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      word-break: break-all;
+      overflow: hidden;
+      line-height: 1.2;
+    }
+
+    html {
+      font-weight: 600;
+      font-family: "Hiragino Kaku Gothic Pro";
+    }
+  </style>
+</head>
+<body style="width: 1040px; border: solid 1px rgb(151, 151, 151);">
+<table border="0" style="width: 100%; font-weight: 800;">
+  <tr style="border-bottom:  solid 1px rgb(151, 151, 151);">
+    <td th:text="${name}" style="padding: 40px 50px; font-size: 64px;">新しい地図</td>
+    <td width="294">
+      <button
+        style="font-size: 40px; padding: 20px 79px; background-color: rgb(216, 216, 216); border-style: none; border-radius: 8px;">
+        変更
+      </button>
+    </td>
+  </tr>
+</table>
+<table>
+  <tr style="height: 250px;">
+    <th style="width: 250px; height: 250px; overflow: hidden;"><img src=""
+                                                                    style="height: 250px; width: 250px;" /></th>
+    <th width="663" style="position: relative">
+      <h2
+        style="position: absolute;
+        top: 30px; left: 52px;
+         font-size: 40px; font-weight: 600; height: 40px;">
+        清水寺</h2>
+      <p style="position: absolute;
+        top: 90px;
+        left: 52px;
+        width: 560px;
+        font-size: 35px; font-weight: 600;">
+        田川の大人気店【あぼんど】の姉妹店として連日大盛況の【鶏と魚】は個室完備で全席掘りごたつなのでゆっくりとお食事を楽しんでいただけます♪ランチでは健康的な和定食をお楽しみいただけます。コース料理は2500円からご.</p>
+    </th>
+    <th width="125" style="text-align: center; border-left: solid 1px;">
+      <img src="../static/trash.png" th:src="@{|/trash.png|}" />
+    </th>
+  </tr>
+</table>
+<div style="padding: 38px 0; text-align: center; font-size: 35px; border-style: solid none; border-width: 1px;"
+>食べログやGoogle MapのURLを送ると、<br />新しい場所を追加できます。
+</div>
+<table style="width: 100%; font-size: 40px; border-bottom: solid 1px;">
+  <tr>
+    <td width="1" style="height:145px; text-align: center; font-weight: 600;">
+      <span style="vertical-align:middle;">まとめて地図で見る</span>
+      <img style="vertical-align:middle;" src="../static/nextCopy3.png" th:src="@{/nextCopy3.png}"
+           height="60" />
+    </td>
+    <td width="1"></td>
+  </tr>
+</table>
+</body>
+</html>
