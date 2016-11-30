@@ -1,6 +1,7 @@
 package com.linecorp.bot.spring.boot.support;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -17,6 +18,7 @@ import com.linecorp.bot.model.ReplyMessage;
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.ReplyEvent;
 import com.linecorp.bot.model.message.Message;
+import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.response.BotApiResponse;
 
 import lombok.Builder;
@@ -74,17 +76,21 @@ class ReplyByReturnValueConsumer implements Consumer<Object> {
     }
 
     private void acceptResult(final Object returnValue) {
-        if (returnValue instanceof Message) {
-            reply(singletonList((Message) returnValue));
+        final List<?> returnValueAsList;
+
+        if (returnValue instanceof String || returnValue instanceof Message) {
+            returnValueAsList = singletonList(returnValue);
         } else if (returnValue instanceof List) {
-            List<?> returnValueAsList = (List<?>) returnValue;
-
-            if (returnValueAsList.isEmpty()) {
-                return;
-            }
-
-            reply(checkListContents(returnValueAsList));
+            returnValueAsList = (List<?>) returnValue;
+        } else {
+            throw new IllegalArgumentException("Can't handle method return value: " + returnValue);
         }
+
+        if (returnValueAsList.isEmpty()) {
+            return;
+        }
+
+        reply(toMessageList(returnValueAsList));
     }
 
     private void reply(final List<Message> messages) {
@@ -102,18 +108,22 @@ class ReplyByReturnValueConsumer implements Consumer<Object> {
         }
     }
 
+    private static List<Message> toMessageList(final List<?> list) {
+        return list.stream().map(ReplyByReturnValueConsumer::toMessage).collect(toList());
+    }
+
     @VisibleForTesting
-    static List<Message> checkListContents(final List<?> list) {
-        for (int i = 0; i < list.size(); ++i) {
-            final Object item = list.get(i);
-            Preconditions.checkNotNull(item, "item is null. index = {} in {}", i, list);
-            Preconditions.checkArgument(item instanceof Message,
-                                        "List contains not Message type object. type = {}",
-                                        item.getClass());
+    static Message toMessage(Object item) {
+        Preconditions.checkNotNull(item, "item is null.");
+
+        if (item instanceof Message) {
+            return (Message) item;
         }
 
-        @SuppressWarnings("unchecked")
-        final List<Message> messageList = (List<Message>) list;
-        return messageList;
+        if (item instanceof String) {
+            return new TextMessage((String) item);
+        }
+
+        throw new IllegalArgumentException("List contains not Message type object. type = " + item.getClass());
     }
 }

@@ -21,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import com.google.common.collect.ImmutableList;
+
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.exception.GeneralLineMessagingException;
 import com.linecorp.bot.model.ReplyMessage;
@@ -67,6 +69,29 @@ public class ReplyByReturnValueConsumerTest {
         verify(lineMessagingClient, only())
                 .replyMessage(new ReplyMessage(EVENT.getReplyToken(),
                                                singletonList(new TextMessage("Reply Text"))));
+    }
+
+    @Test
+    public void acceptRawStringTest() throws Exception {
+        // Do
+        target.accept("Raw String Return Value");
+
+        // Verify
+        verify(lineMessagingClient, only())
+                .replyMessage(new ReplyMessage(EVENT.getReplyToken(),
+                                               singletonList(new TextMessage("Raw String Return Value"))));
+    }
+
+    @Test
+    public void acceptRawStringListTest() throws Exception {
+        // Do
+        target.accept(ImmutableList.of("1st", "2nd"));
+
+        // Verify
+        verify(lineMessagingClient, only())
+                .replyMessage(new ReplyMessage(EVENT.getReplyToken(),
+                                               ImmutableList.of(new TextMessage("1st"),
+                                                                new TextMessage("2nd"))));
     }
 
     @Test
@@ -139,18 +164,18 @@ public class ReplyByReturnValueConsumerTest {
 
     // Internal method test.
     @Test
-    public void checkListContentsNullTest() throws Exception {
+    public void toMessageNullTest() throws Exception {
         expectedException.expect(NullPointerException.class);
 
         // Do
-        ReplyByReturnValueConsumer.checkListContents(singletonList(null));
+        ReplyByReturnValueConsumer.toMessage(null);
     }
 
     @Test
-    public void checkListContentsIllegalTypeTest() throws Exception {
+    public void toMessageIllegalTypeTest() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
 
         // Do
-        ReplyByReturnValueConsumer.checkListContents(singletonList(new Object()));
+        ReplyByReturnValueConsumer.toMessage(new Object());
     }
 }
