@@ -13,5 +13,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 #
-server.use-forward-headers=true
-logging.level.org.springframework=DEBUG
+###############################################################################
+#
+# To start webhook server.
+# Copy & rename this file as 'application.yml' and put channel secret&token.
+line:
+  bot:
+    channel-secret: 'xxx'
+    channel-token: 'yyy'
+    handler:
+      path: /callback
