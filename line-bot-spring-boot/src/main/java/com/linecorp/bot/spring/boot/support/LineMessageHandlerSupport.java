@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -93,6 +95,9 @@ public class LineMessageHandlerSupport {
             if (event instanceof ContextRefreshedEvent) {
                 refresh();
             }
+            if (event instanceof ApplicationReadyEvent) {
+                printEndpoint();
+            }
         });
     }
 
@@ -119,6 +124,11 @@ public class LineMessageHandlerSupport {
                                          item.getSupportType(), item.getHandler().toGenericString()));
 
         eventConsumerList = collect;
+    }
+
+    private void printEndpoint() {
+        final URI path = lineBotProperties.getHandler().getPath();
+        log.info("Waiting \u001B[32mLINE\u001B[0m Messaging webhook on {}", path);
     }
 
     private HandlerMethod getMethodHandlerMethodFunction(Object consumer, Method method) {
