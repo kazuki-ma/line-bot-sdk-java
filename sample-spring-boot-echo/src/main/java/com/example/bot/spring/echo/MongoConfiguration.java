@@ -10,7 +10,8 @@ import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.example.bot.spring.echo.Storage.Location;
+import com.example.bot.spring.echo.LocationRepository.Location;
+import com.example.bot.spring.echo.MapRepository.Map;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
@@ -38,5 +39,10 @@ public class MongoConfiguration {
     @Bean
     public MongoCollection<Location> locationMongoCollection(MongoClient mongoClient) {
         return mongoClient.getDatabase("group").getCollection("location", Location.class);
+    }
+
+    @Bean
+    public MongoCollection<Map> mapMongoCollection(MongoClient mongoClient) {
+        return mongoClient.getDatabase("group").getCollection("map", Map.class);
     }
 }

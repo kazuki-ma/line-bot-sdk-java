@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.io.ByteStreams;
 
@@ -35,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LineBotCallbackRequestParser {
     private final LineSignatureValidator lineSignatureValidator;
-    private final ObjectMapper objectMapper;
+    private final ObjectReader objectMapper;
 
     /**
      * Create new instance
@@ -45,7 +46,7 @@ public class LineBotCallbackRequestParser {
     public LineBotCallbackRequestParser(
             @NonNull LineSignatureValidator lineSignatureValidator) {
         this.lineSignatureValidator = lineSignatureValidator;
-        this.objectMapper = buildObjectMapper();
+        this.objectMapper = buildObjectMapper().readerFor(CallbackRequest.class);
     }
 
     /**
@@ -71,10 +72,11 @@ public class LineBotCallbackRequestParser {
             throw new LineBotCallbackException("Invalid API signature");
         }
 
-        final CallbackRequest callbackRequest = objectMapper.readValue(json, CallbackRequest.class);
+        final CallbackRequest callbackRequest = objectMapper.readValue(json);
         if (callbackRequest == null || callbackRequest.getEvents() == null) {
             throw new LineBotCallbackException("Invalid content");
         }
+
         return callbackRequest;
     }
 

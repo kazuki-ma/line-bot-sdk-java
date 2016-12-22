@@ -1,10 +1,12 @@
 package com.example.bot.spring.echo;
 
+import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,23 +48,30 @@ public class TabelogService {
 
         final Pattern compile = Pattern.compile("center=([-0-9\\.]+),([-0-9\\.]+)");
         final Matcher matcher = compile.matcher(html);
+        final URI image = URI.create(document.getElementsByAttributeValue("property", "og:image")
+                                             .attr("content"));
 
         matcher.find();
 
         double latitude = Double.valueOf(matcher.group(1));
-        double longtitude = Double.valueOf(matcher.group(2));
+        double longitude = Double.valueOf(matcher.group(2));
 
         log.info("groupCount: {}", matcher.groupCount());
         log.info("groupCount: {}", latitude);
-        log.info("groupCount: {}", longtitude);
+        log.info("groupCount: {}", longitude);
 
-        return new Location(document.title(), latitude, longtitude);
+        final Element elementById = document.getElementById("pr-comment-body");
+        final String comment = elementById != null ? elementById.text() : null;
+
+        return new Location(document.title(), comment, image, latitude, longitude);
     }
 
     @Value
     static class Location {
         String title;
+        String description;
+        URI image;
         double latitude;
-        double longtitude;
+        double longitude;
     }
 }

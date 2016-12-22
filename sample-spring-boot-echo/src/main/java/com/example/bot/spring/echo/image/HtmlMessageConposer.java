@@ -1,4 +1,4 @@
-package com.example.bot.spring.echo;
+package com.example.bot.spring.echo.image;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -31,7 +31,7 @@ import lombok.AllArgsConstructor;
 public class HtmlMessageConposer {
     SnapShooter snapShooter;
 
-    @RequestMapping(path = "/test/**", produces = "image/svg+xml")
+    @RequestMapping(path = "/test/**")
     public ModelAndView modelAndView() {
         return new ModelAndView("test");
     }
@@ -44,7 +44,7 @@ public class HtmlMessageConposer {
         writeImageToResponse(snap, response);
     }
 
-    private static void writeImageToResponse(
+    static void writeImageToResponse(
             final RenderedImage result,
             final HttpServletResponse httpServletResponse) {
         final ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
