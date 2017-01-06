@@ -1,0 +1,42 @@
+
+line:
+  bot:
+    channel-secret: 22a1d9fd8862d75a9973ed19e29b002d
+    channel-token: CeBEJ0d3PV86Ml8l/WIsNa8P14jG+1McKdPg09CH9cRii+/8fzrWDGuWtrQ27R7rdOLTqp01/bEeH9CIzBrCExbzaJ+gFJm878DCBNjzUDeIQIAgWNdqfquOEHUA24CY2sy7vmm+fmi8k6TxANY8hwdB04t89/1O/w1cDnyilFU=
+    handler:
+      enabled: true
+spring:
+  thymeleaf:
+    prefix: 'file:src/main/resources/templates/'
+    suffix: '.html'
+    cache: false
+  resources:
+    static-locations: 'file:src/main/resources/static/'
+  mongodb:
+    embedded:
+      storage:
+        database-dir: /Users/jp20217/groupMap
+
+server.port: 8080
+
+host: 'https://5fd6801d.ngrok.io/'
+host-internal: http://localhost:${server.port}/
+
+spring.devtools.restart:
+  additional-paths: /src/main/resources/templates
+  additional-exclude: '**' # Restart is not needed. Only reload needed.
+  quiet-period: 50
+  poll-interval: 100
+
+
+#
+#server:
+#  ssl:
+#    enabled: true
+#    enabled-protocols: TLSv1.2
+#    key-store: classpath:kazuki-ma.serendipity.la.keystore
+#    key-store-password: tetlist
+#  port: 8443
+
+
+
