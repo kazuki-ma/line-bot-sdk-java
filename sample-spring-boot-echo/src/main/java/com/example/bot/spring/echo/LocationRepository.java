@@ -30,15 +30,19 @@ public class LocationRepository {
         return ImmutableList.copyOf(collection.find(eq("mapId", mapId)));
     }
 
+    public Location delete(final String id) {
+        return collection.findOneAndDelete(eq("_id", id));
+    }
+
     @Data
     @Accessors(chain = true)
     @ToString(callSuper = true)
     @EqualsAndHashCode(callSuper = true)
-
     public static class Location extends MongoDocument {
         String mapId;
         String title;
         String description;
+        URI url;
         URI image;
         double latitude;
         double longitude;

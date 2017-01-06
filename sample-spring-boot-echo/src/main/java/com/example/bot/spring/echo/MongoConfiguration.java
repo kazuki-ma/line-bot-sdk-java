@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.example.bot.spring.echo.LocationRepository.Location;
 import com.example.bot.spring.echo.MapRepository.Map;
+import com.example.bot.spring.echo.SessionStorage.Session;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
@@ -44,5 +45,10 @@ public class MongoConfiguration {
     @Bean
     public MongoCollection<Map> mapMongoCollection(MongoClient mongoClient) {
         return mongoClient.getDatabase("group").getCollection("map", Map.class);
+    }
+
+    @Bean
+    public MongoCollection<Session> sessionMongoCollection(MongoClient mongoClient) {
+        return mongoClient.getDatabase("group").getCollection("session", Session.class);
     }
 }

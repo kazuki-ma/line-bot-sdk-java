@@ -14,8 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriComponentsBuilder;
 
+import com.example.bot.spring.echo.BotConfiguration;
 import com.example.bot.spring.echo.LocationRepository;
 import com.example.bot.spring.echo.LocationRepository.Location;
 import com.example.bot.spring.echo.MapRepository;
@@ -26,7 +26,8 @@ import lombok.AllArgsConstructor;
 
 @Controller
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class MapGenerator {
+public class MapImageGenerator {
+    private final BotConfiguration botConfiguration;
     private final MapRepository mapRepository;
     private final LocationRepository locationRepository;
     private final SnapShooter snapShooter;
@@ -46,9 +47,8 @@ public class MapGenerator {
     @GetMapping(path = "/internal/mapImage", produces = MediaType.IMAGE_PNG_VALUE)
     public void mapImage(
             @RequestParam("id") final String mapId,
-            final HttpServletResponse response,
-            final UriComponentsBuilder uriComponentsBuilder) {
-        final URI uri = uriComponentsBuilder.path("/internal/map").queryParam("id", mapId).build().toUri();
+            final HttpServletResponse response) {
+        final URI uri = botConfiguration.getHost().resolve("/internal/map?id=" + mapId);
         final BufferedImage snap = snapShooter.snap(uri);
         writeImageToResponse(snap, response);
     }

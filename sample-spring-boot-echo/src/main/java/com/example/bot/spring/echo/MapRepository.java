@@ -1,5 +1,7 @@
 package com.example.bot.spring.echo;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.ImmutableList;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
 
 import com.linecorp.bot.model.event.source.Source;
 
@@ -28,11 +29,15 @@ public class MapRepository {
 
     public List<Map> findBySource(final Source source) {
         return ImmutableList.copyOf(
-                collection.find(Filters.eq("owner", source.getSenderId())).iterator());
+                collection.find(eq("owner", source.getSenderId())).iterator());
     }
 
     public Map find(final String id) {
-        return collection.find(Filters.eq("_id", id)).iterator().next();
+        return collection.find(eq("_id", id)).iterator().next();
+    }
+
+    public void update(Map map) {
+        collection.findOneAndReplace(eq("_id", map.get_id()), map);
     }
 
     @Data

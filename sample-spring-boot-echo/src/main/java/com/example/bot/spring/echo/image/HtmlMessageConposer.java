@@ -1,7 +1,7 @@
 package com.example.bot.spring.echo.image;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -9,6 +9,7 @@ import java.net.URI;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
@@ -45,18 +46,26 @@ public class HtmlMessageConposer {
     }
 
     static void writeImageToResponse(
-            final RenderedImage result,
+            final BufferedImage result,
             final HttpServletResponse httpServletResponse) {
-        final ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
+        final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+        final ImageWriteParam jpgWriteParam = writer.getDefaultWriteParam();
+        jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        jpgWriteParam.setCompressionQuality(0.3f);
+
+        final BufferedImage newBufferedImage =
+                new BufferedImage(result.getWidth(), result.getHeight(), BufferedImage.TYPE_INT_RGB);
+        newBufferedImage.createGraphics().drawImage(result, 0, 0, Color.WHITE, null);
 
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
              ImageOutputStream imageOutputStream = new MemoryCacheImageOutputStream(byteArrayOutputStream)) {
+
             writer.setOutput(imageOutputStream);
-            writer.write(null, new IIOImage(result, null, null), writer.getDefaultWriteParam());
+            writer.write(null, new IIOImage(newBufferedImage, null, null), jpgWriteParam);
 
             imageOutputStream.flush();
 
-            httpServletResponse.setContentType(MediaType.IMAGE_PNG_VALUE);
+            httpServletResponse.setContentType(MediaType.IMAGE_JPEG_VALUE);
             httpServletResponse.setIntHeader(HttpHeaders.CONTENT_LENGTH, byteArrayOutputStream.size());
 
             httpServletResponse.getOutputStream().write(byteArrayOutputStream.toByteArray());
