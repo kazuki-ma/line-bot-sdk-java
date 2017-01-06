@@ -1,3 +1,4 @@
+spring.profiles.include: dev
 
 line:
   bot:
@@ -12,15 +13,9 @@ spring:
     cache: false
   resources:
     static-locations: 'file:src/main/resources/static/'
-  mongodb:
-    embedded:
-      storage:
-        database-dir: /Users/jp20217/groupMap
 
 server.port: 8080
 
-host: 'https://5fd6801d.ngrok.io/'
-host-internal: http://localhost:${server.port}/
 
 spring.devtools.restart:
   additional-paths: /src/main/resources/templates
@@ -28,6 +23,27 @@ spring.devtools.restart:
   quiet-period: 50
   poll-interval: 100
 
+
+---
+spring.profiles: prod
+host: https://groupmap.link/
+host-internal: https://groupmap.link/
+spring:
+  mongodb:
+    embedded:
+      storage:
+        database-dir: /var/groupmap
+
+---
+spring.profiles: dev
+
+host: 'https://5fd6801d.ngrok.io/'
+host-internal: http://localhost:${server.port}/
+spring:
+  mongodb:
+    embedded:
+      storage:
+        database-dir: /Users/jp20217/groupMap
 
 #
 #server:
