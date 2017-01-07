@@ -168,7 +168,7 @@ public class EchoApplication {
         final java.util.Map<String, String> context = sessionStorage.getMap(event.getSource());
         sessionStorage.set(new Session(event.getSource())); // reset session
 
-        switch (event.getMessage().getText()) {
+        switch (event.getMessage().getText().trim().toUpperCase()) {
             case "OK":
                 final String newName = context.get("name");
 
@@ -193,7 +193,7 @@ public class EchoApplication {
 
         final String message = text + "に名前を変更します";
         final TemplateMessage templateMessage =
-                new TemplateMessage(message,
+                new TemplateMessage(message + "\nよろしければ、OK  と入力して下さい",
                                     new ConfirmTemplate(message,
                                                         new MessageAction("Cancel", "Cancel"),
                                                         new MessageAction("OK", "OK")));
