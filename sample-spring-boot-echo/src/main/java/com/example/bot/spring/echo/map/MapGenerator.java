@@ -22,12 +22,13 @@ import lombok.Value;
 @Controller
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MapGenerator {
+    public static final String MAP_PATH = "/map";
     private final MapRepository mapRepository;
     private final LocationRepository locationRepository;
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    @GetMapping("/googlemap")
+    @GetMapping(MAP_PATH)
     public ModelAndView generateGoogleMap(@RequestParam("id") final String id) {
         final Map map = mapRepository.find(id);
         final List<Location> locationList = locationRepository.read(id);

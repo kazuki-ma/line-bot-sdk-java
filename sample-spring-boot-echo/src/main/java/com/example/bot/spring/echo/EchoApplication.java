@@ -16,6 +16,7 @@
 
 package com.example.bot.spring.echo;
 
+import static com.example.bot.spring.echo.map.MapGenerator.MAP_PATH;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -290,7 +291,7 @@ public class EchoApplication {
                                                   new ImagemapArea(1040 - 125, y, 125, height)));
         }
 
-        final String mapUri = botConfiguration.getHost().resolve("/googlemap?id=" + map.get_id()).toString();
+        final String mapUri = botConfiguration.getHost().resolve(MAP_PATH + "?id=" + map.get_id()).toString();
         actions.add(new URIImagemapAction(
                 mapUri, new ImagemapArea(0, 176 + 250 * size + 186, 1040, 145)));
 
