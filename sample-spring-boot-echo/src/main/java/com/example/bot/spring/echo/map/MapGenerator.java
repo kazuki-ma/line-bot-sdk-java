@@ -2,11 +2,10 @@ package com.example.bot.spring.echo.map;
 
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.bot.spring.echo.LocationRepository;
@@ -27,7 +26,7 @@ public class MapGenerator {
     private final LocationRepository locationRepository;
 
     @GetMapping(path = MAP_PATH)
-    public ModelAndView generateGoogleMap(@PathParam("id") final String id) {
+    public ModelAndView generateGoogleMap(@PathVariable("id") final String id) {
         final Map map = mapRepository.find(id);
         final List<Location> locationList = locationRepository.read(id);
         return new ModelAndView("google_map")
