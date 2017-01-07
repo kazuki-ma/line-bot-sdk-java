@@ -291,9 +291,9 @@ public class EchoApplication {
                                                   new ImagemapArea(1040 - 125, y, 125, height)));
         }
 
-        final String mapUri = botConfiguration.getHost().resolve(MAP_PATH + "?id=" + map.get_id()).toString();
-        actions.add(new URIImagemapAction(
-                mapUri, new ImagemapArea(0, 176 + 250 * size + 186, 1040, 145)));
+        final String mapUri = botConfiguration.getHost().resolve(MAP_PATH.replace("{id}", id)).toString();
+        final ImagemapArea imagemapArea = new ImagemapArea(0, 176 + 250 * size + 186, 1040, 145);
+        actions.add(new URIImagemapAction(mapUri, imagemapArea));
 
         return new ImagemapMessage(
                 botConfiguration.getHost().resolve("/internal/mapImage?id=" + id + "&_=" + Instant.now())

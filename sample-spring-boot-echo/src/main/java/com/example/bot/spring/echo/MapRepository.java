@@ -1,11 +1,10 @@
 package com.example.bot.spring.echo;
 
 import static com.mongodb.client.model.Filters.eq;
-import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 
 import java.util.List;
-import java.util.UUID;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -48,7 +47,7 @@ public class MapRepository {
     @EqualsAndHashCode(callSuper = true)
     public static class Map extends MongoDocument {
         {
-            _id = md5Hex(UUID.randomUUID().toString()).toUpperCase().substring(0, 10);
+            _id = RandomStringUtils.randomAlphanumeric(8);
         }
 
         String owner;
