@@ -5,9 +5,9 @@ import static com.mongodb.client.model.Filters.eq;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.DigestUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.mongodb.client.MongoCollection;
@@ -48,7 +48,7 @@ public class MapRepository {
     @EqualsAndHashCode(callSuper = true)
     public static class Map extends MongoDocument {
         {
-            _id = MD5Encoder.encode(UUID.randomUUID().toString().getBytes());
+            _id = DigestUtils.md5DigestAsHex(UUID.randomUUID().toString().getBytes());
         }
 
         String owner;

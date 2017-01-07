@@ -24,6 +24,8 @@
 
     a {
       color: inherit;
+      width: 10em;
+      display: block;
     }
   </style>
 </head>
@@ -71,7 +73,7 @@ function initMap() {
     zoom: 15
   });
 
-  var latMin = 90, latMax = -90, lngMin = 180, lngMax = -180;
+  let latMin = 90, latMax = -90, lngMin = 180, lngMax = -180;
 
   viewModel.locationList.forEach(location => {
     latMin = location.latitude < latMin ? location.latitude : latMin;
@@ -94,6 +96,42 @@ function initMap() {
 
   map.fitBounds({north: latMax, south: latMin, west: lngMin, east: lngMax});
   line.setMap(map);
+
+  geoFindMe();
+}
+
+function geoFindMe() {
+  if (!navigator.geolocation) {
+    return;
+  }
+
+  const marker = new google.maps.Marker({
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 10,
+      strokeColor: 'blue',
+      strokeOpacity: 0.5,
+    },
+    draggable: false,
+    map: map
+  });
+
+  const success = function (position) {
+    console.log(position);
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    marker.setPosition({
+      lat: latitude,
+      lng: longitude
+    });
+  };
+
+  const error = function () {
+  };
+
+  navigator.geolocation.getCurrentPosition(success, error);
+  navigator.geolocation.watchPosition(success);
 }
 
 //]]></script>
