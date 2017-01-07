@@ -48,10 +48,19 @@ public class HtmlMessageConposer {
     static void writeImageToResponse(
             final BufferedImage result,
             final HttpServletResponse httpServletResponse) {
-        final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
-        final ImageWriteParam jpgWriteParam = writer.getDefaultWriteParam();
-        jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        jpgWriteParam.setCompressionQuality(0.3f);
+        final ImageWriter writer;
+        final ImageWriteParam jpgWriteParam;
+        boolean png = true;
+
+        if (png) {
+            writer = ImageIO.getImageWritersByFormatName("png").next();
+            jpgWriteParam = null;
+        } else {
+            writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+            jpgWriteParam = writer.getDefaultWriteParam();
+            jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            jpgWriteParam.setCompressionQuality(0.3f);
+        }
 
         final BufferedImage newBufferedImage =
                 new BufferedImage(result.getWidth(), result.getHeight(), BufferedImage.TYPE_INT_RGB);

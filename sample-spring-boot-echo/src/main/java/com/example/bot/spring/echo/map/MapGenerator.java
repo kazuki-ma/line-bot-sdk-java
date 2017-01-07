@@ -13,6 +13,7 @@ import com.example.bot.spring.echo.LocationRepository.Location;
 import com.example.bot.spring.echo.MapRepository;
 import com.example.bot.spring.echo.MapRepository.Map;
 import com.example.bot.spring.echo.ViewModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,8 @@ import lombok.Value;
 public class MapGenerator {
     private final MapRepository mapRepository;
     private final LocationRepository locationRepository;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @GetMapping("/googlemap")
     public ModelAndView generateGoogleMap(@RequestParam("id") final String id) {
@@ -38,6 +41,6 @@ public class MapGenerator {
     @Builder
     public static class Model {
         Map map;
-        List<Location> locationList;
+        List<Map> locationList;
     }
 }

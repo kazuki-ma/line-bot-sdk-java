@@ -2,6 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="viewModel" type="com.example.bot.spring.echo.ViewModel"*/-->
 <head>
+  <script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
   <meta name="viewport"
         content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1, user-scalable=no, target-densitydpi=medium-dpi, minimal-ui" />
   <title th:text="${viewModel.getMap().getName()} + ' - LINE Group Map'" />
@@ -27,6 +31,33 @@
 <script type="text/javascript">//<![CDATA[
 
 var map;
+
+function createMarker(location) {
+  const link = $('<a target="_blank" />').attr('href', location.url.schemeSpecificPart).text(location.title);
+
+  const infowindow = new google.maps.InfoWindow({
+    content: link.prop('outerHTML')
+  });
+
+  const position = {lat: location.latitude, lng: location.longitude};
+  const marker = new google.maps.Marker({
+    position: position,
+    map: map,
+    animation: google.maps.Animation.DROP,
+    title: location.title
+  });
+
+  marker.addListener('click', function () {
+    infowindow.open(map, marker);
+  });
+
+  setTimeout(function () {
+    infowindow.open(map, marker);
+  }, 1000);
+
+  marker.setMap(map);
+}
+
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: {
@@ -43,6 +74,8 @@ function initMap() {
     latMax = location.latitude > latMax ? location.latitude : latMax;
     lngMin = location.longitude < lngMin ? location.longitude : lngMin;
     lngMax = location.longitude > lngMax ? location.longitude : lngMax;
+
+    createMarker(location);
   });
 
   const line = new google.maps.Polyline({
