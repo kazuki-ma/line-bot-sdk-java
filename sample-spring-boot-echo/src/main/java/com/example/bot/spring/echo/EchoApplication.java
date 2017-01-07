@@ -129,8 +129,9 @@ public class EchoApplication {
             return changeNameConfirm(event);
         }
 
-        System.out.println("event: " + event);
-        return singletonList(new TextMessage(text));
+        log.info("event: {} from {}", event.getMessage(), event.getSource());
+
+        return emptyList();
     }
 
     private List<Message> handleGoogleMapsShare(MessageEvent<TextMessageContent> event) {
