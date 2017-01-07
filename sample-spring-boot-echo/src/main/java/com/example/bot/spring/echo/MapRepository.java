@@ -48,7 +48,7 @@ public class MapRepository {
     @EqualsAndHashCode(callSuper = true)
     public static class Map extends MongoDocument {
         {
-            _id = md5Hex(UUID.randomUUID().toString());
+            _id = md5Hex(UUID.randomUUID().toString()).toUpperCase().substring(0, 10);
         }
 
         String owner;
