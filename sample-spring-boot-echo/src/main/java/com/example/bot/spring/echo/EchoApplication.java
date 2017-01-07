@@ -16,6 +16,7 @@
 
 package com.example.bot.spring.echo;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -23,7 +24,10 @@ import static java.util.Collections.singletonMap;
 import java.net.URI;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +36,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.devtools.restart.Restarter;
 
 import com.example.bot.spring.echo.MapRepository.Map;
+import com.example.bot.spring.echo.OGPService.Location;
 import com.example.bot.spring.echo.SessionStorage.Session;
-import com.example.bot.spring.echo.TabelogService.Location;
+import com.example.bot.spring.echo.googlemaps.GoogleMapsService;
+import com.example.bot.spring.echo.googlemaps.GoogleMapsService.TitleLocationPair;
 import com.google.common.collect.ImmutableList;
 
 import com.linecorp.bot.model.action.MessageAction;
@@ -68,7 +74,8 @@ public class EchoApplication {
     public static final String CHANGE_NAME_CONFIRM = "CHANGE_NAME_CONFIRM";
     public static final String TEXT_CHANGE_NAME = "地図の名前を変える";
     private final BotConfiguration botConfiguration;
-    private final TabelogService tabelogService;
+    private final OGPService OGPService;
+    private final GoogleMapsService googleMapsService;
     private final MapRepository mapRepository;
     private final LocationRepository locationRepository;
     private final SessionStorage sessionStorage;
@@ -93,6 +100,11 @@ public class EchoApplication {
         String text = event.getMessage().getText();
 
         final String context = sessionStorage.getContext(event.getSource());
+
+        if (StringUtils.containsIgnoreCase(text, "goo.gl/maps")
+            || StringUtils.containsIgnoreCase(text, "www.google.co.jp/maps/place")) {
+            return handleGoogleMapsShare(event);
+        }
 
         if (text.startsWith("http")) {
             return handleUrl(event.getSource(), text);
@@ -121,6 +133,35 @@ public class EchoApplication {
         return singletonList(new TextMessage(text));
     }
 
+    private List<Message> handleGoogleMapsShare(MessageEvent<TextMessageContent> event) {
+        final Matcher matcher =
+                Pattern.compile("https://(goo.gl|www.google)\\p{ASCII}+")
+                       .matcher(event.getMessage().getText());
+
+        matcher.find();
+
+        final URI shortenUri = URI.create(matcher.group(0));
+        final TitleLocationPair locationFromShortUri =
+                shortenUri.getHost().equalsIgnoreCase("goo.gl")
+                ? googleMapsService.getLocationFromShortUri("", shortenUri)
+                : googleMapsService.getLocationFromLongUri("", shortenUri);
+
+        final Map map = getOrCreateMap(event.getSource());
+
+        final double[] location = Arrays.stream(locationFromShortUri.getLocation().split(","))
+                                        .mapToDouble(Double::parseDouble)
+                                        .toArray();
+        locationRepository.create(new LocationRepository.Location()
+                                          .setMapId(map.get_id())
+                                          .setUrl(shortenUri)
+                                          .setTitle(locationFromShortUri.getTitle())
+                                          .setImage(locationFromShortUri.getIcon())
+                                          .setLatitude(location[0])
+                                          .setLongitude(location[1]));
+
+        return singletonList(imagemapMessage(map));
+    }
+
     private List<Message> changeNameConfirm(MessageEvent<TextMessageContent> event) {
         final java.util.Map<String, String> context = sessionStorage.getMap(event.getSource());
         sessionStorage.set(new Session(event.getSource())); // reset session
@@ -133,7 +174,8 @@ public class EchoApplication {
                 final Map map = source.get(0).setName(newName);
                 mapRepository.update(map);
 
-                return singletonList(new TextMessage(newName + " に名前を変更しました"));
+                return asList(new TextMessage(newName + " に名前を変更しました"),
+                              imagemapMessage(map));
         }
         return singletonList(new TextMessage("名前の変更をキャンセルしました"));
     }
@@ -166,20 +208,20 @@ public class EchoApplication {
         final String id = text.replaceFirst("Delete:", "");
         final LocationRepository.Location deletedLocation = locationRepository.delete(id);
 
-        return singletonList(new TextMessage("削除しました:" + deletedLocation.getTitle()));
+        return ImmutableList.of(new TextMessage("削除しました:" + deletedLocation.getTitle()),
+                                imagemapMessage(getOrCreateMap(event.getSource())));
     }
 
     private List<Message> resentImage(MessageEvent<TextMessageContent> event) {
         final Map map = getOrCreateMap(event.getSource());
-        final List<LocationRepository.Location> locations = locationRepository.read(map._id);
-        final ImagemapMessage imagemapMessage = imagemapMessage(map, locations);
+        final ImagemapMessage imagemapMessage = imagemapMessage(map);
 
         return singletonList(imagemapMessage);
     }
 
     private List<? extends Message> handleUrl(final Source source, final String text) {
         final URI uri = URI.create(text.replaceAll("\\?.*", ""));
-        final Location location = tabelogService.getLocationMessage(uri.toString());
+        final Location location = OGPService.getLocationMessage(uri.toString());
 
         final Map map = getOrCreateMap(source);
         locationRepository.create(new LocationRepository.Location()
@@ -192,9 +234,7 @@ public class EchoApplication {
                                           .setLongitude(location.getLongitude()));
         log.info("{}", mapRepository.find(map.get_id()));
 
-        final List<LocationRepository.Location> locations = locationRepository.read(map._id);
-
-        final ImagemapMessage imagemapMessage = imagemapMessage(map, locations);
+        final ImagemapMessage imagemapMessage = imagemapMessage(map);
 
         return ImmutableList.of(new TextMessage(location.toString()),
                                 imagemapMessage,
@@ -219,9 +259,9 @@ public class EchoApplication {
     }
 
     private ImagemapMessage imagemapMessage(
-            final Map map,
-            final List<LocationRepository.Location> locations) {
+            final Map map) {
         final String id = map.get_id();
+        final List<LocationRepository.Location> locations = locationRepository.read(map._id);
 
         final List<ImagemapAction> actions = new ArrayList<>();
 
@@ -233,8 +273,10 @@ public class EchoApplication {
             final int y = 176 + 250 * i;
             final int height = 176;
 
-            actions.add(new URIImagemapAction(location.getUrl().toString(),
-                                              new ImagemapArea(0, y, 1040 - 125, height)));
+            if (location.getUrl() != null) {
+                actions.add(new URIImagemapAction(location.getUrl().toString(),
+                                                  new ImagemapArea(0, y, 1040 - 125, height)));
+            }
             actions.add(new MessageImagemapAction("Delete:" + location.get_id(),
                                                   new ImagemapArea(1040 - 125, y, 125, height)));
         }

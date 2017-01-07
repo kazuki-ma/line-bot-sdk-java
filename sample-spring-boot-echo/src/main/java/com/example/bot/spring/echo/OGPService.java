@@ -21,10 +21,10 @@ import retrofit2.adapter.java8.Java8CallAdapterFactory;
 
 @Slf4j
 @Service
-public class TabelogService {
+public class OGPService {
     private final TabelogApi tabelogService;
 
-    public TabelogService() {
+    public OGPService() {
         final Logger slf4jLogger = LoggerFactory.getLogger(TabelogApi.class);
 
         tabelogService = new Builder()

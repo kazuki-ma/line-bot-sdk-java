@@ -1,9 +1,7 @@
-spring.profiles.include: dev
+spring.profiles.active: dev
 
 line:
   bot:
-    channel-secret: 22a1d9fd8862d75a9973ed19e29b002d
-    channel-token: CeBEJ0d3PV86Ml8l/WIsNa8P14jG+1McKdPg09CH9cRii+/8fzrWDGuWtrQ27R7rdOLTqp01/bEeH9CIzBrCExbzaJ+gFJm878DCBNjzUDeIQIAgWNdqfquOEHUA24CY2sy7vmm+fmi8k6TxANY8hwdB04t89/1O/w1cDnyilFU=
     handler:
       enabled: true
 spring:
@@ -26,6 +24,11 @@ spring.devtools.restart:
 
 ---
 spring.profiles: prod
+
+line.bot:
+  channel-secret: 22a1d9fd8862d75a9973ed19e29b002d
+  channel-token: CeBEJ0d3PV86Ml8l/WIsNa8P14jG+1McKdPg09CH9cRii+/8fzrWDGuWtrQ27R7rdOLTqp01/bEeH9CIzBrCExbzaJ+gFJm878DCBNjzUDeIQIAgWNdqfquOEHUA24CY2sy7vmm+fmi8k6TxANY8hwdB04t89/1O/w1cDnyilFU=
+
 host: https://groupmap.link/
 host-internal: https://groupmap.link/
 spring:
@@ -37,7 +40,11 @@ spring:
 ---
 spring.profiles: dev
 
-host: 'https://5fd6801d.ngrok.io/'
+line.bot:
+  channel-secret: f68e50298db7e80e919fcd3190750891
+  channel-token: msT856rFni14xlgxampMiSFZ0bV+cyRLjlgsPaKISDqajfI+LM5UC/QddKi4huKA+nKMtyzsxo56/V0ALCZkxL+ZmsBneFWMUvrdqnT8rof+upFaB8e91M6z5lFoTiHZvzfyWH/RVXMrhIcU2OY1ngdB04t89/1O/w1cDnyilFU=
+
+host: 'https://8bf2580c.ngrok.io/'
 host-internal: http://localhost:${server.port}/
 spring:
   mongodb:
