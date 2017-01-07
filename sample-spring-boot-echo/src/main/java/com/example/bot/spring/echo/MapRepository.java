@@ -3,7 +3,9 @@ package com.example.bot.spring.echo;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.List;
+import java.util.UUID;
 
+import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -45,6 +47,10 @@ public class MapRepository {
     @ToString(callSuper = true)
     @EqualsAndHashCode(callSuper = true)
     public static class Map extends MongoDocument {
+        {
+            _id = MD5Encoder.encode(UUID.randomUUID().toString().getBytes());
+        }
+
         String owner;
         String name;
     }

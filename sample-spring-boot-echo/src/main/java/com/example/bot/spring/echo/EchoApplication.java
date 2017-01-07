@@ -58,6 +58,7 @@ import com.linecorp.bot.model.message.imagemap.ImagemapArea;
 import com.linecorp.bot.model.message.imagemap.ImagemapBaseSize;
 import com.linecorp.bot.model.message.imagemap.MessageImagemapAction;
 import com.linecorp.bot.model.message.imagemap.URIImagemapAction;
+import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
@@ -209,7 +210,15 @@ public class EchoApplication {
         final String id = text.replaceFirst("Delete:", "");
         final LocationRepository.Location deletedLocation = locationRepository.delete(id);
 
-        return ImmutableList.of(new TextMessage("削除しました:" + deletedLocation.getTitle()),
+        final ButtonsTemplate template =
+                new ButtonsTemplate(null, null,
+                                    "削除しました:" + deletedLocation.getTitle(),
+                                    singletonList(new MessageAction("取り消し",
+                                                                    deletedLocation.getUrl().toString())));
+        final TemplateMessage deletedMessage = new TemplateMessage("削除しました",
+                                                                   template);
+
+        return ImmutableList.of(deletedMessage,
                                 imagemapMessage(getOrCreateMap(event.getSource())));
     }
 
@@ -296,8 +305,6 @@ public class EchoApplication {
 
     @EventMapping
     public void handleDefaultMessageEvent(Event event) {
-
         System.out.println("event: " + event);
     }
-
 }
