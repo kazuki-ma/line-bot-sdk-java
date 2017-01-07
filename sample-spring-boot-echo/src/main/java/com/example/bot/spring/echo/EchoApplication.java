@@ -215,8 +215,7 @@ public class EchoApplication {
                                     "削除しました:" + deletedLocation.getTitle(),
                                     singletonList(new MessageAction("取り消し",
                                                                     deletedLocation.getUrl().toString())));
-        final TemplateMessage deletedMessage = new TemplateMessage("削除しました",
-                                                                   template);
+        final TemplateMessage deletedMessage = new TemplateMessage("削除しました", template);
 
         return ImmutableList.of(deletedMessage,
                                 imagemapMessage(getOrCreateMap(event.getSource())));
