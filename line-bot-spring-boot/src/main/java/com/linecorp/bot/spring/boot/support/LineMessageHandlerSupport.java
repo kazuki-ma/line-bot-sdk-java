@@ -44,7 +44,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
-import com.sun.istack.internal.Nullable;
 
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.MessageEvent;
@@ -85,7 +84,6 @@ public class LineMessageHandlerSupport {
             Ordering.natural().onResultOf(HandlerMethod::getPriority).reverse();
     private final ReplyByReturnValueConsumer.Factory returnValueConsumerFactory;
     private final ConfigurableApplicationContext applicationContext;
-    @Nullable
     private final SessionStorageIface sessionStorageIface;
 
     volatile List<HandlerMethod> eventConsumerList;
