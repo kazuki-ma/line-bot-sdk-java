@@ -44,7 +44,7 @@ line.bot:
   channel-secret: f68e50298db7e80e919fcd3190750891
   channel-token: msT856rFni14xlgxampMiSFZ0bV+cyRLjlgsPaKISDqajfI+LM5UC/QddKi4huKA+nKMtyzsxo56/V0ALCZkxL+ZmsBneFWMUvrdqnT8rof+upFaB8e91M6z5lFoTiHZvzfyWH/RVXMrhIcU2OY1ngdB04t89/1O/w1cDnyilFU=
 
-host: 'https://8bf2580c.ngrok.io/'
+host: 'https://05eb4077.ngrok.io/'
 host-internal: http://localhost:${server.port}/
 spring:
   mongodb:

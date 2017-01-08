@@ -2,13 +2,13 @@ package com.example.bot.spring.echo;
 
 import org.junit.Test;
 
-import com.example.bot.spring.echo.OGPService.Location;
+import com.example.bot.spring.echo.fetcher.OGPService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class OGPServiceTest {
-    OGPService OGPService = new OGPService();
+    com.example.bot.spring.echo.fetcher.OGPService OGPService = new OGPService();
 
     @Test
     public void test() {

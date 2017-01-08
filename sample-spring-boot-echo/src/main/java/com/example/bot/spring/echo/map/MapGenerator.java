@@ -26,7 +26,8 @@ public class MapGenerator {
     private final LocationRepository locationRepository;
 
     @GetMapping(path = MAP_PATH)
-    public ModelAndView generateGoogleMap(@PathVariable("id") final String id) {
+    public ModelAndView generateGoogleMap(
+            @PathVariable("id") final String id) {
         final Map map = mapRepository.find(id);
         final List<Location> locationList = locationRepository.read(id);
         return new ModelAndView("google_map")

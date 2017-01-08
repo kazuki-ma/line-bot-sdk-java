@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200">
+  <foreignObject class="node" x="0" y="0" width="300" height="200">
+    <body xmlns="http://www.w3.org/1999/xhtml" style="margin: 0;background-color:red; height: 200px;">
+      <div>The quick brown fox jumps over the lazy dog. Pack my box with
+        five dozen liquor jugs
+      </div>
+    </body>
+  </foreignObject>
+</svg>

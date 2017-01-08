@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
@@ -15,15 +16,15 @@ import org.springframework.web.util.UriUtils;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
+import com.example.bot.spring.echo.Location;
 import com.example.bot.spring.echo.googlemaps.GoogleMapsApi.NearBySearchResponse;
 import com.example.bot.spring.echo.googlemaps.GoogleMapsApi.PlaceResponse.Result;
+import com.example.bot.spring.echo.googlemaps.GoogleMapsApi.PlaceResponse.Result.Photo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
-import lombok.Data;
 import lombok.SneakyThrows;
-import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -35,12 +36,12 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 @Slf4j
 @Service
 public class GoogleMapsService {
-
     public static final Pattern URL_LOCATION_PATTERN = Pattern.compile("/@([-0-9.]+,[-0-9.]+)");
+    public static final String KEY = "AIzaSyAGWBuI3nBvEm0aUzw8KCF3UhlBJWjNPRA";
     private final GoogleMapsApi googleMapsApi;
 
     public GoogleMapsService() {
-        googleMapsApi = getGoogleMapsApi("AIzaSyAGWBuI3nBvEm0aUzw8KCF3UhlBJWjNPRA");
+        googleMapsApi = getGoogleMapsApi(KEY);
     }
 
     static GoogleMapsApi getGoogleMapsApi(final String key) {
@@ -77,7 +78,7 @@ public class GoogleMapsService {
     }
 
     @SneakyThrows
-    public TitleLocationPair getLocationFromShortUri(
+    public Location getLocationFromShortUri(
             String title,
             URI shortenUri) {
         Selenide.open(shortenUri.toString());
@@ -96,24 +97,41 @@ public class GoogleMapsService {
     }
 
     @SneakyThrows
-    public TitleLocationPair getLocationFromLongUri(String title, URI longUrl) {
+    public Location getLocationFromLongUri(String title, URI longUrl) {
         final String titleFromUri = getTitleStringFromUri(longUrl);
         final String location = getLocationStringFromUri(longUrl);
-        final TitleLocationPair titleLocationPair = new TitleLocationPair()
-                .setTitle(title)
-                .setLocation(location);
 
         final NearBySearchResponse nearBySearchResponse =
-                googleMapsApi.nearBySearch(titleFromUri, titleLocationPair.getLocation()).get();
+                googleMapsApi.nearBySearch(titleFromUri, location).get();
 
         final Result placeDetail =
                 googleMapsApi.placeDetail(nearBySearchResponse.getResults().get(0).getPlaceId())
                              .get().getResult();
 
-        titleLocationPair.setTitle(placeDetail.getName());
-        titleLocationPair.setIcon(placeDetail.getIcon());
+        final URI icon;
+        if (placeDetail.getPhotos().isEmpty()) {
+            icon = placeDetail.getIcon();
+        } else {
+            final Photo photo = placeDetail.getPhotos().get(0);
+            icon = createPlaceUri(photo.getPhotoReference());
+        }
 
-        return titleLocationPair;
+        final double[] locationPair = Stream.of(location.split(",")).mapToDouble(Double::parseDouble).toArray();
+
+        return new Location(placeDetail.getName(),
+                            "",
+                            icon,
+                            locationPair[0],
+                            locationPair[1]);
+    }
+
+    @SneakyThrows
+    public URI createPlaceUri(String photoReference) {
+        return new URIBuilder("https://maps.googleapis.com/maps/api/place/photo")
+                .addParameter("key", KEY)
+                .addParameter("photoreference", photoReference)
+                .addParameter("maxwidth", "640")
+                .build();
     }
 
     @SneakyThrows
@@ -130,12 +148,12 @@ public class GoogleMapsService {
         return matcher.group(1);
     }
 
-    @Data
-    @Accessors(chain = true)
-    public static class TitleLocationPair {
-        String title;
-        String location;
-        String description;
-        URI icon;
-    }
+//    @Data
+//    @Accessors(chain = true)
+//    public static class TitleLocationPair {
+//        String title;
+//        String location;
+//        String description;
+//        URI icon;
+//    }
 }

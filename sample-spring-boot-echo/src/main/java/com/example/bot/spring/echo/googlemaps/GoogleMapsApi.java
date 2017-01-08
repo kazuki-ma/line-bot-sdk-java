@@ -65,4 +65,16 @@ public interface GoogleMapsApi {
 
         Result result;
     }
+
+    @GET("maps/api/place/photo?maxwidth=640")
+    CompletableFuture<PlacePhotoResponse> placePhoto(
+            String photoReference);
+
+    URI palcePhotoUrl(
+            String photoReference);
+
+    @Data
+    class PlacePhotoResponse {
+
+    }
 }

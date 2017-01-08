@@ -1,4 +1,4 @@
-package com.example.bot.spring.echo;
+package com.example.bot.spring.echo.fetcher;
 
 import java.net.URI;
 import java.util.regex.Matcher;
@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import lombok.Value;
+import com.example.bot.spring.echo.Location;
+import com.example.bot.spring.echo.TabelogApi;
+
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -38,7 +40,7 @@ public class OGPService {
                 .create(TabelogApi.class);
     }
 
-    Location getLocationMessage(String path) {
+    public Location getLocationMessage(String path) {
         final String html = tabelogService.getSync(path);
         return extractLocationImpl(html);
     }
@@ -64,14 +66,5 @@ public class OGPService {
         final String comment = elementById != null ? elementById.text() : null;
 
         return new Location(document.title(), comment, image, latitude, longitude);
-    }
-
-    @Value
-    static class Location {
-        String title;
-        String description;
-        URI image;
-        double latitude;
-        double longitude;
     }
 }

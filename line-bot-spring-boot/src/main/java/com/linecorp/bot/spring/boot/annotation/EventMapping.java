@@ -43,4 +43,11 @@ public @interface EventMapping {
      * Priority of this mapping. Bigger mapping is preferentially searched and matched.
      */
     int priority() default DEFAULT_PRIORITY_VALUE;
+
+    /** Regex prefix of supplied text. */
+    String text() default "";
+
+    String context() default "";
+
+    String postbackPrefix() default "";
 }

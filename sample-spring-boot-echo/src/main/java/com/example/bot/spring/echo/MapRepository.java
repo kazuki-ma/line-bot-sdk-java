@@ -24,8 +24,9 @@ import lombok.experimental.Accessors;
 public class MapRepository {
     private final MongoCollection<Map> collection;
 
-    public void create(final Map map) {
+    public Map create(final Map map) {
         collection.insertOne(map);
+        return map;
     }
 
     public List<Map> findBySource(final Source source) {
@@ -34,11 +35,15 @@ public class MapRepository {
     }
 
     public Map find(final String id) {
-        return collection.find(eq("_id", id)).iterator().next();
+        return collection.find(eq("_id", id)).first();
     }
 
     public void update(Map map) {
         collection.findOneAndReplace(eq("_id", map.get_id()), map);
+    }
+
+    public Map delete(String mapId) {
+        return collection.findOneAndDelete(eq("_id", mapId));
     }
 
     @Data

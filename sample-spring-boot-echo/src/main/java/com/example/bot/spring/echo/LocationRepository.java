@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.ImmutableList;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Updates;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,15 @@ public class LocationRepository {
 
     public void create(final Location location) {
         collection.insertOne(location);
+    }
+
+    public Location get(final String locationId) {
+        return collection.find(eq("_id", locationId)).first();
+    }
+
+    public void setMap(final Location location, final String mapId) {
+        collection.updateMany(eq("_id", location.get_id()),
+                              Updates.set("mapId", mapId));
     }
 
     public List<Location> read(final String mapId) {

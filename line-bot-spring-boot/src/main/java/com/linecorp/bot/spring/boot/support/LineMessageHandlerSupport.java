@@ -24,7 +24,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
+import java.util.Optional;
+import java.util.function.BiPredicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +44,14 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
+import com.sun.istack.internal.Nullable;
 
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.MessageEvent;
+import com.linecorp.bot.model.event.PostbackEvent;
 import com.linecorp.bot.model.event.ReplyEvent;
 import com.linecorp.bot.model.event.message.MessageContent;
+import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineBotMessages;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
@@ -79,15 +85,19 @@ public class LineMessageHandlerSupport {
             Ordering.natural().onResultOf(HandlerMethod::getPriority).reverse();
     private final ReplyByReturnValueConsumer.Factory returnValueConsumerFactory;
     private final ConfigurableApplicationContext applicationContext;
+    @Nullable
+    private final SessionStorageIface sessionStorageIface;
 
     volatile List<HandlerMethod> eventConsumerList;
 
     @Autowired
     public LineMessageHandlerSupport(
             final ReplyByReturnValueConsumer.Factory returnValueConsumerFactory,
-            final ConfigurableApplicationContext applicationContext) {
+            final ConfigurableApplicationContext applicationContext,
+            final Optional<SessionStorageIface> sessionStorageIfaceOptional) {
         this.returnValueConsumerFactory = returnValueConsumerFactory;
         this.applicationContext = applicationContext;
+        this.sessionStorageIface = sessionStorageIfaceOptional.orElse(null);
 
         applicationContext.addApplicationListener(event -> {
             if (event instanceof ContextRefreshedEvent) {
@@ -134,28 +144,33 @@ public class LineMessageHandlerSupport {
 
         final Type type = method.getGenericParameterTypes()[0];
 
-        final Predicate<Event> predicate = new EventPredicate(type);
+        final BiPredicate<Event, ISession> predicate = new EventPredicate(type, mapping);
         return new HandlerMethod(predicate, consumer, method,
                                  getPriority(mapping, type));
     }
 
     private int getPriority(final EventMapping mapping, final Type type) {
+        final int contextLength = mapping.context().length();
+        final int postbackPrefixLength = mapping.postbackPrefix().length();
+        final int textPoint = mapping.text().isEmpty() ? 0 : 100;
+        final int additionalValue = contextLength + postbackPrefixLength + textPoint;
+
         if (mapping.priority() != EventMapping.DEFAULT_PRIORITY_VALUE) {
             return mapping.priority();
         }
 
         if (type == Event.class) {
-            return EventMapping.DEFAULT_PRIORITY_FOR_EVENT_IFACE;
+            return EventMapping.DEFAULT_PRIORITY_FOR_EVENT_IFACE + additionalValue;
         }
 
         if (type instanceof Class) {
-            return ((Class<?>) type).isInterface()
-                   ? EventMapping.DEFAULT_PRIORITY_FOR_IFACE
-                   : EventMapping.DEFAULT_PRIORITY_FOR_CLASS;
+            return (((Class<?>) type).isInterface()
+                    ? EventMapping.DEFAULT_PRIORITY_FOR_IFACE
+                    : EventMapping.DEFAULT_PRIORITY_FOR_CLASS) + additionalValue;
         }
 
         if (type instanceof ParameterizedType) {
-            return EventMapping.DEFAULT_PRIORITY_FOR_PARAMETRIZED_TYPE;
+            return EventMapping.DEFAULT_PRIORITY_FOR_PARAMETRIZED_TYPE + additionalValue;
         }
 
         throw new IllegalStateException();
@@ -163,7 +178,7 @@ public class LineMessageHandlerSupport {
 
     @Value
     static class HandlerMethod {
-        Predicate<Event> supportType;
+        BiPredicate<Event, ISession> supportType;
         Object object;
         Method handler;
         int priority;
@@ -187,9 +202,12 @@ public class LineMessageHandlerSupport {
     }
 
     private void dispatchInternal(final Event event) throws Exception {
+        ISession session = sessionStorageIface != null ? sessionStorageIface.getSession(event.getSource())
+                                                       : null;
+
         final HandlerMethod handlerMethod = eventConsumerList
                 .stream()
-                .filter(consumer -> consumer.getSupportType().test(event))
+                .filter(consumer -> consumer.getSupportType().test(event, session))
                 .findFirst()
                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported event type. " + event));
         final Object returnValue = handlerMethod.getHandler().invoke(handlerMethod.getObject(), event);
@@ -204,12 +222,14 @@ public class LineMessageHandlerSupport {
         }
     }
 
-    private static class EventPredicate implements Predicate<Event> {
+    private static class EventPredicate implements BiPredicate<Event, ISession> {
         private final Class<?> supportEvent;
         private final Class<? extends MessageContent> messageContentType;
+        private final EventMapping eventMapping;
 
         @SuppressWarnings("unchecked")
-        EventPredicate(final Type mapping) {
+        EventPredicate(final Type mapping, final EventMapping eventMapping) {
+            this.eventMapping = eventMapping;
             if (mapping == ReplyEvent.class) {
                 supportEvent = ReplyEvent.class;
                 messageContentType = null;
@@ -229,7 +249,32 @@ public class LineMessageHandlerSupport {
         }
 
         @Override
-        public boolean test(final Event event) {
+        public boolean test(final Event event, final ISession session) {
+            if (!eventMapping.context().isEmpty() &&
+                (session == null || !eventMapping.context().equals(session.getContext()))) {
+                return false;
+            }
+
+            if (event instanceof PostbackEvent && !eventMapping.postbackPrefix().isEmpty()) {
+                final PostbackEvent postbackEvent = (PostbackEvent) event;
+
+                if (!postbackEvent.getPostbackContent().getData().startsWith(eventMapping.postbackPrefix())) {
+                    return false;
+                }
+            }
+
+            if (event instanceof MessageEvent
+                && ((MessageEvent) event).getMessage() instanceof TextMessageContent
+                && !eventMapping.text().isEmpty()) {
+                final String text = ((TextMessageContent) ((MessageEvent) event).getMessage()).getText();
+
+                final Matcher matcher = Pattern.compile(eventMapping.text()).matcher(text);
+
+                if (!matcher.find() || matcher.start() > 0) {
+                    return false;
+                }
+            }
+
             return supportEvent.isAssignableFrom(event.getClass())
                    && (messageContentType == null ||
                        event instanceof MessageEvent &&
