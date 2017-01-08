@@ -7,7 +7,7 @@ import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.example.bot.spring.echo.googlemaps.GoogleMapsService.TitleLocationPair;
+import com.example.bot.spring.echo.Location;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,9 +41,9 @@ public class GoogleMapsServiceTest {
 
     @Test
     public void getLocationFromShortUriTest() {
-        final TitleLocationPair locationFromShortUri
-                = target.getLocationFromShortUri("渋谷駅",
-                                                 URI.create("https://goo.gl/maps/NnTwuDEhhqS2"));
+        final Location locationFromShortUri =
+                target.getLocationFromShortUri("渋谷駅",
+                                               URI.create("https://goo.gl/maps/NnTwuDEhhqS2"));
 
         log.info("{}", locationFromShortUri);
     }

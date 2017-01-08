@@ -71,6 +71,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EchoApplication {
     public static final PostbackType<MapActionRequest> MAP_ACTION =
             new PostbackType<>("MAP_ACT", MapActionRequest.class);
+    public static final String CTX_DELETE_MAP_CONFIRM = "DELETE_MAP_CONFIRM";
     private final BotConfiguration botConfiguration;
     private final com.example.bot.spring.echo.fetcher.OGPService OGPService;
     private final GoogleMapsService googleMapsService;
@@ -209,7 +210,7 @@ public class EchoApplication {
     private TemplateMessage getTemplateMessage(List<Map> maps) {
         final List<CarouselColumn> carouselColumns = carouselGenerator.mapToColumn(maps, map -> {
             final PostbackAction nameAction =
-                    new PostbackAction(map.getName() + "を確認",
+                    new PostbackAction("リストを確認",
                                        PostbackUtil.encode(MAP_ACTION, new MapActionRequest()
                                                .setMapId(map.get_id())
                                                .setAction(MapAction.LIST)),
@@ -244,7 +245,7 @@ public class EchoApplication {
                 return singletonList(imagemapMessage(map));
             case DELETE:
                 sessionStorage.set(new Session(event.getSource())
-                                           .setContext("DELETE_MAP_CONFIRM")
+                                           .setContext(CTX_DELETE_MAP_CONFIRM)
                                            .setData(singletonMap("mapId", map.get_id())));
 
                 final String confirmPostback =
@@ -261,7 +262,11 @@ public class EchoApplication {
                         new TemplateMessage(map.getName() + "を削除する場合は OK",
                                             confirmTemplate));
             case DELETE_CONFIRMED:
-                sessionStorage.delete(event.getSource());
+                final Session session = sessionStorage.delete(event.getSource());
+                if (session == null || !session.getContext().equalsIgnoreCase(CTX_DELETE_MAP_CONFIRM)) {
+                    return singletonList(new TextMessage("もう一度最初から始めて下さい"));
+                }
+
                 final Map deletedMap = mapRepository.delete(mapActionRequest.getMapId());
 
                 List<Message> messages = new ArrayList<>();
@@ -276,6 +281,12 @@ public class EchoApplication {
         }
         sessionStorage.delete(event.getSource());
         return emptyList();
+    }
+
+    @EventMapping(text = "キャンセル|Cancel")
+    public Message handleCancel(MessageEvent<TextMessageContent> event) {
+        sessionStorage.delete(event.getSource());
+        return new TextMessage("取り消しました");
     }
 
     private Map getOrCreateMap(Source source) {
