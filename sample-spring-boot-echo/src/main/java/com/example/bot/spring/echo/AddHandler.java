@@ -93,6 +93,8 @@ public class AddHandler {
                 PostbackUtil.decode(MAP_LOCATION_PAIR_TYPE,
                                     data);
 
+        sessionStorage.delete(event.getSource());
+
         final Location location = locationRepository.get(mapLocationPair.getLocationId());
         final String mapId = "NEW".equalsIgnoreCase(mapLocationPair.getMapId())
                              ? mapRepository.create(new Map().setName("新しい地図")
