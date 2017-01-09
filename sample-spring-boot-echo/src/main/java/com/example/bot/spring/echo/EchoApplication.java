@@ -44,7 +44,6 @@ import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.event.Event;
-import com.linecorp.bot.model.event.FollowEvent;
 import com.linecorp.bot.model.event.JoinEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.PostbackEvent;
@@ -88,12 +87,12 @@ public class EchoApplication {
         SpringApplication.run(EchoApplication.class, args);
     }
 
-    @EventMapping
-    public List<? extends Message> handleFollowEvent(final FollowEvent event) {
-        final List<Message> messages = new ArrayList<>();
-        messages.addAll(welcomeMessage());
-        return messages;
-    }
+//    @EventMapping
+//    public List<? extends Message> handleFollowEvent(final FollowEvent event) {
+//        final List<Message> messages = new ArrayList<>();
+//        messages.addAll(welcomeMessage());
+//        return messages;
+//    }
 
     @EventMapping
     public List<? extends Message> handleJoinEvent(final JoinEvent event) {
