@@ -14,7 +14,7 @@ spring:
 
 server:
   port: 8080
-  tomcat.max-threads: 4
+  tomcat.max-threads: 32
 
 spring.devtools.restart:
   additional-paths: /src/main/resources/templates
