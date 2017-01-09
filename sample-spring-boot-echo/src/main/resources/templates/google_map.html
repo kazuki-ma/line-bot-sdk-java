@@ -9,9 +9,10 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1, user-scalable=no, target-densitydpi=medium-dpi, minimal-ui" />
   <title th:text="${viewModel.getMap().getName()} + ' - Group Map'" />
-  <meta name="description" content="Group Map は(ry" />
+  <meta name="description"
+        content="Group Map を使えば、みんなで行きたいレストランや、旅行先で行ってみたい場所をひとつの地図にまとめることができます。自分たちだけの地図を作って、色々なところにお出かけしよう！" />
   <meta property="og:image"
-        content="http://img.dummy-image-generator.com/abstract/dummy-1200x600-Goemetry.jpg" />
+        th:content="${@config.host.resolve('/image/og_image.png')}" />
   <style type="text/css">
     html, body {
       height: 100%;

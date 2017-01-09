@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
-@Component
+@Component("config")
 @Data
 @ConfigurationProperties(prefix = "")
 public class BotConfiguration {
