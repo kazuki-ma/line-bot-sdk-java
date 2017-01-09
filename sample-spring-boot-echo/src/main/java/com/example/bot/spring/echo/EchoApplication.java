@@ -44,6 +44,7 @@ import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.event.Event;
+import com.linecorp.bot.model.event.FollowEvent;
 import com.linecorp.bot.model.event.JoinEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.PostbackEvent;
@@ -88,8 +89,27 @@ public class EchoApplication {
     }
 
     @EventMapping
+    public List<? extends Message> handleFollowEvent(final FollowEvent event) {
+        final List<Message> messages = new ArrayList<>();
+        messages.addAll(welcomeMessage());
+        return messages;
+    }
+
+    @EventMapping
     public List<? extends Message> handleJoinEvent(final JoinEvent event) {
-        return ImmutableList.of(new TextMessage("食べログ・Google Map の URL を送信すると、地図を作成します"));
+        return welcomeMessage();
+    }
+
+    public List<? extends Message> welcomeMessage() {
+        return asList(
+                new TextMessage("Group Map の追加ありがとうございます。"),
+                new TextMessage("Group Map を使えば、みんなで行きたいレストランや、旅行先で行ってみたい場所をひとつの地図にまとめることができます。\n"
+                                + "自分たちだけの地図を作って、色々なところにお出かけしよう！\n"
+                                + "\n"
+                                + "■使い方\n"
+                                + "食べログの気になるお店や、Google Mapの行ってみたい場所のURLを送ってください。\n"
+                                + "Group Map がURLを受け取って、地図に追加します。"),
+                new TextMessage("Group Map が不要になったら、グループから削除してください。 同じグループにもう一度追加すれば、同じ地図を続けて利用できます。"));
     }
 
     @EventMapping
