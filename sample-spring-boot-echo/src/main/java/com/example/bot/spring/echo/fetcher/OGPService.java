@@ -45,7 +45,7 @@ public class OGPService {
         return extractLocationImpl(html);
     }
 
-    Location extractLocationImpl(String html) {
+    public Location extractLocationImpl(String html) {
         final Document document = Jsoup.parse(html);
 
         final Pattern compile = Pattern.compile("center=([-0-9\\.]+),([-0-9\\.]+)");

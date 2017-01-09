@@ -20,6 +20,7 @@ include 'line-bot-spring-boot'
  */
 
 // samples
+include 'kakomon-bot'
 include 'sample-spring-boot-kitchensink'
 include 'sample-spring-boot-echo'
 
