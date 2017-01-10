@@ -32,6 +32,8 @@ line.bot:
 
 host: https://groupmap.link/
 host-internal: http://localhost:${server.port}/
+line-id: @zzk9691a
+
 spring:
   mongodb:
     embedded:
@@ -47,6 +49,8 @@ line.bot:
 
 host: 'https://bc2da3e6.ngrok.io'
 host-internal: http://localhost:${server.port}/
+line-id: @ndg3530x
+
 spring:
   mongodb:
     embedded:

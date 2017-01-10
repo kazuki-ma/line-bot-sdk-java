@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 @ConfigurationProperties(prefix = "")
 public class BotConfiguration {
+    String lineId;
     URI host;
     URI hostInternal;
 }
