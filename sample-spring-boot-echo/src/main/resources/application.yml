@@ -27,11 +27,11 @@ spring.devtools.restart:
 spring.profiles: prod
 
 line.bot:
-  channel-secret: 22a1d9fd8862d75a9973ed19e29b002d
-  channel-token: CeBEJ0d3PV86Ml8l/WIsNa8P14jG+1McKdPg09CH9cRii+/8fzrWDGuWtrQ27R7rdOLTqp01/bEeH9CIzBrCExbzaJ+gFJm878DCBNjzUDeIQIAgWNdqfquOEHUA24CY2sy7vmm+fmi8k6TxANY8hwdB04t89/1O/w1cDnyilFU=
+  channel-secret: 639b48d5a333f63d9e8daba0f92e069d
+  channel-token: yxz7nrcYz9b8f0NSWNrN1lBlgblEkLtIohoUrdGYkFN5pCYwEFC92xBEcfAOiE0B6L15Ri4N12GD3/d/jQS60GJZLX+eOnzVrqY8lpBFOtBvNvNJV6Pngw/rc3KTh0ckdd7VrR7LE9hMI6OdtfCZTgdB04t89/1O/w1cDnyilFU=
 
 host: https://groupmap.link/
-host-internal: https://groupmap.link/
+host-internal: http://localhost:${server.port}/
 spring:
   mongodb:
     embedded:
