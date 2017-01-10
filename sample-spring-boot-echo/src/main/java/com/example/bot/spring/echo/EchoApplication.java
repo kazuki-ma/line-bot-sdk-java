@@ -72,6 +72,7 @@ public class EchoApplication {
     public static final PostbackType<MapActionRequest> MAP_ACTION =
             new PostbackType<>("MAP_ACT", MapActionRequest.class);
     public static final String CTX_DELETE_MAP_CONFIRM = "DELETE_MAP_CONFIRM";
+    public static final Pattern TABELOG_PATTERN = Pattern.compile("tabelog.com(/[^/]+){4}");
     private final BotConfiguration botConfiguration;
     private final com.example.bot.spring.echo.fetcher.OGPService OGPService;
     private final GoogleMapsService googleMapsService;
@@ -145,7 +146,9 @@ public class EchoApplication {
         final URI uri;
 
         if (text.contains("tabelog")) {
-            uri = URI.create(text.replaceAll("\\?.*", ""));
+            final Matcher matcher = TABELOG_PATTERN.matcher(text);
+            matcher.find();
+            uri = URI.create("https://" + matcher.group());
             locationFromUri = OGPService.getLocationMessage(uri.toString());
 
 //            locationRepository.create(location);

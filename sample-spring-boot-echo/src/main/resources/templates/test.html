@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <link rel="stylesheet" type="text/css"
         href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css" />
-
+  <script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -56,13 +59,30 @@
       border-left-style: solid;
       border-left-width: 1px;
     }
+
+    #mapName {
+      padding: 40px 50px;
+      font-size: 64px;
+    }
+
+    #mapName.line2 {
+      padding: 20px 50px;
+      font-size: 44px;
+      height: 174px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body style="width: 1040px;">
 <!--/*@thymesVar id="viewModel" type="com.example.bot.spring.echo.ViewModel"*/-->
 <table border="0" style="width: 100%; font-weight: 800;">
   <tr style="border-bottom:  solid 1px rgb(151, 151, 151);">
-    <td th:text="${viewModel.map.name}" style="padding: 40px 50px; font-size: 64px;">新しい地図</td>
+    <td id="mapName" th:text="${viewModel.map.name}" style="">
+      新しい地図
+    </td>
     <td width="294">
       <button
         style="font-size: 40px; padding: 20px 79px; background-color: rgb(216, 216, 216); border-style: none; border-radius: 8px;">
@@ -71,6 +91,11 @@
     </td>
   </tr>
 </table>
+<script>
+  if ($('#mapName').height() > 130) {
+    $('#mapName').addClass('line2');
+  }
+</script>
 <table>
   <tr class="location" style="height: 250px;" th:each="location : ${viewModel.locationList}">
     <th style="width: 250px; height: 250px; position: relative;"

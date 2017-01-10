@@ -32,7 +32,7 @@ line.bot:
 
 host: https://groupmap.link/
 host-internal: http://localhost:${server.port}/
-line-id: @zzk9691a
+line-id: '@zzk9691a'
 
 spring:
   mongodb:
@@ -47,9 +47,9 @@ line.bot:
   channel-secret: f68e50298db7e80e919fcd3190750891
   channel-token: msT856rFni14xlgxampMiSFZ0bV+cyRLjlgsPaKISDqajfI+LM5UC/QddKi4huKA+nKMtyzsxo56/V0ALCZkxL+ZmsBneFWMUvrdqnT8rof+upFaB8e91M6z5lFoTiHZvzfyWH/RVXMrhIcU2OY1ngdB04t89/1O/w1cDnyilFU=
 
-host: 'https://bc2da3e6.ngrok.io'
+host: 'https://fb2d4508.ngrok.io'
 host-internal: http://localhost:${server.port}/
-line-id: @ndg3530x
+line-id: '@ndg3530x'
 
 spring:
   mongodb:
