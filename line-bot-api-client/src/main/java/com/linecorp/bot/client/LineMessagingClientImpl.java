@@ -34,9 +34,10 @@ import retrofit2.Response;
 /**
  * Proxy implementation of {@link LineMessagingClient} to hind internal implementation.
  */
-@AllArgsConstructor
+@AllArgsConstructor(onConstructor = @__(@SuppressWarnings("deprecation")))
 public class LineMessagingClientImpl implements LineMessagingClient {
     private static final ExceptionConverter EXCEPTION_CONVERTER = new ExceptionConverter();
+    @SuppressWarnings("deprecation")
     private final LineMessagingService retrofitImpl;
 
     @Override

@@ -86,4 +86,8 @@ public interface LineMessagingClient {
      * @see <a href="https://devdocs.line.me?java#leave">//devdocs.line.me#leave</a>
      */
     CompletableFuture<BotApiResponse> leaveRoom(String roomId);
+
+    static LineMessagingClientBuilder builder() {
+        return new LineMessagingClientBuilder();
+    }
 }

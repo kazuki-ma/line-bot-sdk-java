@@ -28,8 +28,6 @@ import org.springframework.context.annotation.Import;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.LineMessagingClientImpl;
-import com.linecorp.bot.client.LineMessagingService;
-import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.client.LineSignatureValidator;
 import com.linecorp.bot.servlet.LineBotCallbackRequestParser;
 import com.linecorp.bot.spring.boot.interceptor.LineBotServerInterceptor;
@@ -45,8 +43,9 @@ public class LineBotAutoConfiguration {
     private LineBotProperties lineBotProperties;
 
     @Bean
-    public LineMessagingService lineMessagingService() {
-        return LineMessagingServiceBuilder
+    @SuppressWarnings("deprecation")
+    public com.linecorp.bot.client.LineMessagingService lineMessagingService() {
+        return com.linecorp.bot.client.LineMessagingServiceBuilder
                 .create(lineBotProperties.getChannelToken())
                 .apiEndPoint(lineBotProperties.getApiEndPoint())
                 .connectTimeout(lineBotProperties.getConnectTimeout())
@@ -56,7 +55,9 @@ public class LineBotAutoConfiguration {
     }
 
     @Bean
-    public LineMessagingClient lineMessagingClient(final LineMessagingService lineMessagingService) {
+    public LineMessagingClient lineMessagingClient(
+            @SuppressWarnings("deprecation")
+            final com.linecorp.bot.client.LineMessagingService lineMessagingService) {
         return new LineMessagingClientImpl(lineMessagingService);
     }
 

@@ -16,6 +16,8 @@
 
 package com.linecorp.bot.client;
 
+import java.util.concurrent.CompletableFuture;
+
 import com.linecorp.bot.model.Multicast;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.ReplyMessage;
@@ -30,6 +32,10 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Streaming;
 
+/**
+ * @deprecated use {@link LineMessagingClient}. That is free from implementation detail and uses Java8's {@link CompletableFuture} for async dispatch.
+ */
+@Deprecated
 public interface LineMessagingService {
     /**
      * Reply to messages from users.

@@ -35,11 +35,16 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+/**
+ * @deprecated see {@link LineMessagingService} for detail. If you are using spring-boot integration.
+ * {@link LineMessagingClient} instance is already available.
+ */
+@Deprecated
 public final class LineMessagingServiceBuilder {
-    public static final String DEFAULT_API_END_POINT = "https://api.line.me/";
-    public static final long DEFAULT_CONNECT_TIMEOUT = 10_000;
-    public static final long DEFAULT_READ_TIMEOUT = 10_000;
-    public static final long DEFAULT_WRITE_TIMEOUT = 10_000;
+    public static final String DEFAULT_API_END_POINT = LineMessagingClientBuilder.DEFAULT_API_END_POINT;
+    public static final long DEFAULT_CONNECT_TIMEOUT = LineMessagingClientBuilder.DEFAULT_CONNECT_TIMEOUT;
+    public static final long DEFAULT_READ_TIMEOUT = LineMessagingClientBuilder.DEFAULT_READ_TIMEOUT;
+    public static final long DEFAULT_WRITE_TIMEOUT = LineMessagingClientBuilder.DEFAULT_WRITE_TIMEOUT;
 
     private String apiEndPoint = DEFAULT_API_END_POINT;
     private long connectTimeout = DEFAULT_CONNECT_TIMEOUT;
