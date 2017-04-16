@@ -19,6 +19,7 @@ package com.linecorp.bot.model.event;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -32,6 +33,7 @@ import lombok.Value;
  */
 @Value
 @JsonTypeName("postback")
+@JsonIgnoreProperties("type")
 public class PostbackEvent implements Event, ReplyEvent {
     /**
      * Token for replying to this event

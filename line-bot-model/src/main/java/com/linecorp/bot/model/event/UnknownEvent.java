@@ -18,6 +18,7 @@ package com.linecorp.bot.model.event;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.linecorp.bot.model.event.source.Source;
@@ -28,6 +29,7 @@ import lombok.Value;
  * Fallback event type for {@link Event}.
  */
 @Value
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UnknownEvent implements Event {
     /**
      * Type of the event.

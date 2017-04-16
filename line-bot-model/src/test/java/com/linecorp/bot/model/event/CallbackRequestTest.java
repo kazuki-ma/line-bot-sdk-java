@@ -49,10 +49,10 @@ public class CallbackRequestTest {
     private void parse(String resourceName, RequestTester callback) throws IOException {
         try (InputStream resource = getClass().getClassLoader().getResourceAsStream(resourceName)) {
             String json = StreamUtils.copyToString(resource, StandardCharsets.UTF_8);
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.registerModule(new JavaTimeModule())
-                        .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+            ObjectMapper objectMapper = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true /* for testing*/)
+                    .registerModule(new JavaTimeModule())
+                    .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
             CallbackRequest callbackRequest = objectMapper.readValue(json, CallbackRequest.class);
 
             callback.call(callbackRequest);

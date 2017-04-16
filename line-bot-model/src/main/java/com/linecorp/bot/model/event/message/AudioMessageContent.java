@@ -17,6 +17,7 @@
 package com.linecorp.bot.model.event.message;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -27,6 +28,7 @@ import lombok.Value;
  */
 @Value
 @JsonTypeName("audio")
+@JsonIgnoreProperties("type" /* Explicitly ignore type field. Other unknown field treatment follows mapper configuration. */)
 public class AudioMessageContent implements MessageContent {
     private final String id;
 

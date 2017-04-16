@@ -16,12 +16,15 @@
 
 package com.linecorp.bot.model.event.source;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Value;
 
 /**
  * Fallback source type for {@link Source}.
  */
 @Value
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UnknownSource implements Source {
     @Override
     public String getUserId() {

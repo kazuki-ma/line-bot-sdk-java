@@ -17,6 +17,7 @@
 package com.linecorp.bot.model.event.source;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -24,6 +25,7 @@ import lombok.Value;
 
 @Value
 @JsonTypeName("room")
+@JsonIgnoreProperties("type")
 public class RoomSource implements Source {
     private final String userId;
     private final String roomId;
