@@ -16,11 +16,14 @@
 
 package com.linecorp.bot.model.message;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
 @Value
+@AllArgsConstructor(onConstructor = @__(@JsonCreator))
 @JsonTypeName("text")
 public class TextMessage implements Message {
     private final String text;

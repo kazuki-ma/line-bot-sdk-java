@@ -23,8 +23,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = As.PROPERTY,
-        property = "type",
-        visible = true
+        property = "type"
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(TextMessage.class),
@@ -32,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
         @JsonSubTypes.Type(StickerMessage.class),
         @JsonSubTypes.Type(LocationMessage.class),
         @JsonSubTypes.Type(AudioMessage.class),
+        @JsonSubTypes.Type(VideoMessage.class),
         @JsonSubTypes.Type(ImagemapMessage.class),
         @JsonSubTypes.Type(TemplateMessage.class),
 })
