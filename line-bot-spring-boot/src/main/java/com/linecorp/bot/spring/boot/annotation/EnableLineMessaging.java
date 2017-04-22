@@ -21,13 +21,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.linecorp.bot.spring.boot.support.LineMessageHandlerSupport;
+import com.linecorp.bot.spring.boot.support.LineMessageEventDispatcher;
 
 /**
  * Adding this annotation to an {@code @Configuration} class imports the
- * {@link LineMessageHandlerSupport}.
+ * {@link LineMessageEventDispatcher}.
  *
- * @see LineMessageHandlerSupport
+ * @see LineMessageEventDispatcher
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

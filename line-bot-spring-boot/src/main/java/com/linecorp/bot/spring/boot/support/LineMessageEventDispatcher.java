@@ -35,8 +35,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
@@ -46,8 +44,8 @@ import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.ReplyEvent;
 import com.linecorp.bot.model.event.message.MessageContent;
+import com.linecorp.bot.spring.boot.EventContext;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
-import com.linecorp.bot.spring.boot.annotation.LineBotMessages;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 import lombok.Value;
@@ -71,10 +69,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Beta
-@RestController
 @Import(ReplyByReturnValueConsumer.Factory.class)
 @ConditionalOnProperty(name = "line.bot.handler.enabled", havingValue = "true", matchIfMissing = true)
-public class LineMessageHandlerSupport {
+public class LineMessageEventDispatcher {
     private static final Comparator<HandlerMethod> HANDLER_METHOD_PRIORITY_COMPARATOR =
             Comparator.comparing(HandlerMethod::getPriority).reversed();
     private final ReplyByReturnValueConsumer.Factory returnValueConsumerFactory;
@@ -83,7 +80,7 @@ public class LineMessageHandlerSupport {
     volatile List<HandlerMethod> eventConsumerList;
 
     @Autowired
-    public LineMessageHandlerSupport(
+    public LineMessageEventDispatcher(
             final ReplyByReturnValueConsumer.Factory returnValueConsumerFactory,
             final ConfigurableApplicationContext applicationContext) {
         this.returnValueConsumerFactory = returnValueConsumerFactory;
@@ -119,6 +116,31 @@ public class LineMessageHandlerSupport {
                                          item.getSupportType(), item.getHandler().toGenericString()));
 
         eventConsumerList = collect;
+    }
+
+    public void dispatch(final EventContext eventContext) {
+        try {
+            dispatchExceptionally(eventContext);
+        } catch (InvocationTargetException e) {
+            log.trace("InvocationTargetException occurred.", e);
+            log.error(e.getCause().getMessage(), e.getCause());
+        } catch (Error | Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    private void dispatchExceptionally(EventContext eventContext)
+            throws IllegalAccessException, InvocationTargetException {
+        final Event event = eventContext.event();
+        final HandlerMethod handlerMethod = eventConsumerList
+                .stream()
+                .filter(consumer -> consumer.getSupportType().test(eventContext.event()))
+                .findFirst()
+                .orElseThrow(() -> new UnsupportedOperationException("Unsupported event type. " + event));
+
+        final Object returnValue = handlerMethod.getHandler().invoke(handlerMethod.getObject(), event);
+
+        handleReturnValue(eventContext, returnValue);
     }
 
     private HandlerMethod getMethodHandlerMethodFunction(Object consumer, Method method) {
@@ -169,37 +191,9 @@ public class LineMessageHandlerSupport {
         int priority;
     }
 
-    @PostMapping("${line.bot.handler.path:/callback}")
-    public void callback(@LineBotMessages List<Event> events) {
-        events.forEach(this::dispatch);
-    }
-
-    @VisibleForTesting
-    void dispatch(Event event) {
-        try {
-            dispatchInternal(event);
-        } catch (InvocationTargetException e) {
-            log.trace("InvocationTargetException occurred.", e);
-            log.error(e.getCause().getMessage(), e.getCause());
-        } catch (Error | Exception e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    private void dispatchInternal(final Event event) throws Exception {
-        final HandlerMethod handlerMethod = eventConsumerList
-                .stream()
-                .filter(consumer -> consumer.getSupportType().test(event))
-                .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("Unsupported event type. " + event));
-        final Object returnValue = handlerMethod.getHandler().invoke(handlerMethod.getObject(), event);
-
-        handleReturnValue(event, returnValue);
-    }
-
-    private void handleReturnValue(final Event event, final Object returnValue) {
+    private void handleReturnValue(final EventContext eventContext, final Object returnValue) {
         if (returnValue != null) {
-            returnValueConsumerFactory.createForEvent(event)
+            returnValueConsumerFactory.createForEventContext(eventContext)
                                       .accept(returnValue);
         }
     }

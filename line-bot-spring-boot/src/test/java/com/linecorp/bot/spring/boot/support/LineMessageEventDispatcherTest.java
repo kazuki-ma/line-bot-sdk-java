@@ -16,6 +16,7 @@
 
 package com.linecorp.bot.spring.boot.support;
 
+import static com.linecorp.bot.spring.boot.test.EventTestUtil.createTextMessageEventContext;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -42,14 +43,14 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.ReplyEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.spring.boot.EventContext;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
-import com.linecorp.bot.spring.boot.support.LineMessageHandlerSupport.HandlerMethod;
-import com.linecorp.bot.spring.boot.test.EventTestUtil;
+import com.linecorp.bot.spring.boot.support.LineMessageEventDispatcher.HandlerMethod;
 
 import lombok.AllArgsConstructor;
 
-public class LineMessageHandlerSupportTest {
+public class LineMessageEventDispatcherTest {
     @Rule
     public final MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -63,11 +64,11 @@ public class LineMessageHandlerSupportTest {
     private ReplyByReturnValueConsumer replyByReturnValueConsumer;
 
     @InjectMocks
-    private LineMessageHandlerSupport target;
+    private LineMessageEventDispatcher target;
 
     @Before
     public void setUp() {
-        when(replyByReturnValueConsumerFactory.createForEvent(any()))
+        when(replyByReturnValueConsumerFactory.createForEventContext(any()))
                 .thenReturn(replyByReturnValueConsumer);
     }
 
@@ -115,8 +116,8 @@ public class LineMessageHandlerSupportTest {
     }
 
     @Test
-    public void dispatchAndReplyMessageTest() {
-        final MessageEvent event = EventTestUtil.createTextMessage("text");
+    public void dispatchAndReplyMessageTest() throws Exception {
+        final EventContext eventContext = createTextMessageEventContext("text");
 
         when(applicationContext.getBeansWithAnnotation(LineMessageHandler.class))
                 .thenReturn(singletonMap("bean", new ReplyHandler("Message from Handler method")));
@@ -124,10 +125,10 @@ public class LineMessageHandlerSupportTest {
         target.refresh();
 
         // Do
-        target.dispatch(event);
+        target.dispatch(eventContext);
 
         // Verify
-        verify(replyByReturnValueConsumerFactory).createForEvent(event);
+        verify(replyByReturnValueConsumerFactory).createForEventContext(eventContext);
         verify(replyByReturnValueConsumer, times(1)).accept(new TextMessage("Message from Handler method"));
     }
 

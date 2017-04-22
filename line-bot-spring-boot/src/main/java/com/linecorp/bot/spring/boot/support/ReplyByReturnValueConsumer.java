@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -18,6 +17,7 @@ import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.ReplyEvent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.response.BotApiResponse;
+import com.linecorp.bot.spring.boot.EventContext;
 
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * Basically, message contents are from return value of handler method.
  *
- * @see LineMessageHandlerSupport#handleReturnValue(Event, Object)
+ * @see LineMessageEventDispatcher#handleReturnValue(EventContext, Object)
  */
 @Slf4j
 @Builder
@@ -37,17 +37,10 @@ class ReplyByReturnValueConsumer implements Consumer<Object> {
 
     @Component
     public static class Factory {
-        private final LineMessagingClient lineMessagingClient;
-
-        @Autowired
-        public Factory(final LineMessagingClient lineMessagingClient) {
-            this.lineMessagingClient = lineMessagingClient;
-        }
-
-        ReplyByReturnValueConsumer createForEvent(final Event event) {
+        ReplyByReturnValueConsumer createForEventContext(final EventContext eventContext) {
             return builder()
-                    .lineMessagingClient(lineMessagingClient)
-                    .originalEvent(event)
+                    .lineMessagingClient(eventContext.client())
+                    .originalEvent(eventContext.event())
                     .build();
         }
     }

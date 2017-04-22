@@ -34,15 +34,17 @@ import com.linecorp.bot.client.LineMessagingClientImpl;
 import com.linecorp.bot.client.LineMessagingService;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.client.LineSignatureValidator;
+import com.linecorp.bot.servlet.LineBotCallbackParser;
 import com.linecorp.bot.servlet.LineBotCallbackRequestParser;
 import com.linecorp.bot.spring.boot.interceptor.LineBotServerInterceptor;
 import com.linecorp.bot.spring.boot.support.LineBotServerArgumentProcessor;
-import com.linecorp.bot.spring.boot.support.LineMessageHandlerSupport;
+import com.linecorp.bot.spring.boot.support.LineMessageEventDispatcher;
+import com.linecorp.bot.spring.boot.support.LineMessageWebhookEndpoint;
 
 @Configuration
 @AutoConfigureAfter(LineBotWebMvcConfigurer.class)
 @EnableConfigurationProperties(LineBotProperties.class)
-@Import(LineMessageHandlerSupport.class)
+@Import({ LineMessageEventDispatcher.class, LineMessageWebhookEndpoint.class })
 public class LineBotAutoConfiguration {
     @Autowired
     private LineBotProperties lineBotProperties;
@@ -94,6 +96,14 @@ public class LineBotAutoConfiguration {
     @ConditionalOnWebApplication
     public LineBotCallbackRequestParser lineBotCallbackRequestParser(
             LineSignatureValidator lineSignatureValidator) {
-        return new LineBotCallbackRequestParser(lineSignatureValidator);
+        return new LineBotCallbackRequestParser(new LineBotCallbackParser(lineSignatureValidator));
+    }
+
+    @Bean
+    @ConditionalOnWebApplication
+    public LineMessageWebhookEndpoint lineMessageWebhookEndpoint(
+            final LineMessagingClient lineMessagingClient,
+            final LineMessageEventDispatcher lineMessageEventDispatcher) {
+        return new LineMessageWebhookEndpoint(lineMessagingClient, lineMessageEventDispatcher);
     }
 }
