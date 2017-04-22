@@ -16,8 +16,6 @@
 
 package com.linecorp.bot.spring.boot;
 
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,13 +25,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import com.linecorp.bot.callback.LineBotCallbackParser;
+import com.linecorp.bot.callback.LineSignatureValidator;
 import com.linecorp.bot.client.ChannelTokenSupplier;
 import com.linecorp.bot.client.FixedChannelTokenSupplier;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.LineMessagingClientImpl;
 import com.linecorp.bot.client.LineMessagingService;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
-import com.linecorp.bot.client.LineSignatureValidator;
 import com.linecorp.bot.servlet.LineBotCallbackRequestParser;
 import com.linecorp.bot.spring.boot.interceptor.LineBotServerInterceptor;
 import com.linecorp.bot.spring.boot.support.LineBotServerArgumentProcessor;
@@ -86,14 +85,13 @@ public class LineBotAutoConfiguration {
     @Bean
     @ConditionalOnWebApplication
     public LineSignatureValidator lineSignatureValidator() {
-        return new LineSignatureValidator(
-                lineBotProperties.getChannelSecret().getBytes(StandardCharsets.US_ASCII));
+        return new LineSignatureValidator(lineBotProperties.getChannelSecret());
     }
 
     @Bean
     @ConditionalOnWebApplication
     public LineBotCallbackRequestParser lineBotCallbackRequestParser(
             LineSignatureValidator lineSignatureValidator) {
-        return new LineBotCallbackRequestParser(lineSignatureValidator);
+        return new LineBotCallbackRequestParser(new LineBotCallbackParser(lineSignatureValidator));
     }
 }

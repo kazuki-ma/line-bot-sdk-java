@@ -18,41 +18,35 @@ package com.linecorp.bot.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.Test;
 import org.springframework.util.Base64Utils;
+
+import com.linecorp.bot.callback.LineSignatureValidator;
 
 public class LineSignatureValidatorTest {
     private static final String channelSecret = "SECRET";
 
+    LineSignatureValidator target = new LineSignatureValidator(channelSecret);
+
     @Test
     public void validateSignature() throws Exception {
-        LineSignatureValidator lineSignatureValidator = new LineSignatureValidator(
-                channelSecret.getBytes(StandardCharsets.UTF_8));
+        LineSignatureValidator target = new LineSignatureValidator(channelSecret);
 
         String httpRequestBody = "{}";
-        assertThat(lineSignatureValidator
-                           .validateSignature(httpRequestBody.getBytes(StandardCharsets.UTF_8),
-                                              "3q8QXTAGaey18yL8FWTqdVlbMr6hcuNvM4tefa0o9nA="))
+
+        assertThat(target.validateSignature(httpRequestBody, "3q8QXTAGaey18yL8FWTqdVlbMr6hcuNvM4tefa0o9nA="))
                 .isTrue();
-        assertThat(lineSignatureValidator
-                           .validateSignature(httpRequestBody.getBytes(StandardCharsets.UTF_8),
-                                              "596359635963"))
+
+        assertThat(target.validateSignature(httpRequestBody, "596359635963"))
                 .isFalse();
     }
 
     @Test
     public void generateSignature() throws Exception {
-        LineSignatureValidator lineSignatureValidator = new LineSignatureValidator(
-                channelSecret.getBytes(StandardCharsets.UTF_8));
-
         String httpRequestBody = "{}";
-        byte[] headerSignature = lineSignatureValidator
-                .generateSignature(httpRequestBody.getBytes(StandardCharsets.UTF_8));
+        byte[] headerSignature = target.generateSignature(httpRequestBody);
 
         assertThat(Base64Utils.encodeToString(headerSignature))
                 .isEqualTo("3q8QXTAGaey18yL8FWTqdVlbMr6hcuNvM4tefa0o9nA=");
     }
-
 }

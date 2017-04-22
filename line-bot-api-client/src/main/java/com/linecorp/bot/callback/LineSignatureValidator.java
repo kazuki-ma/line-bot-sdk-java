@@ -14,8 +14,9 @@
  * under the License.
  */
 
-package com.linecorp.bot.client;
+package com.linecorp.bot.callback;
 
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,6 +44,13 @@ public class LineSignatureValidator {
     }
 
     /**
+     * Create new instance with channel secret.
+     */
+    public LineSignatureValidator(String channelSecret) {
+        this(channelSecret.getBytes(StandardCharsets.US_ASCII));
+    }
+
+    /**
      * Validate signature.
      *
      * @param content Body of the http request in byte array.
@@ -53,6 +61,17 @@ public class LineSignatureValidator {
         final byte[] signature = generateSignature(content);
         final byte[] decodeHeaderSignature = Base64.getDecoder().decode(headerSignature);
         return MessageDigest.isEqual(decodeHeaderSignature, signature);
+    }
+
+    /**
+     * Validate signature.
+     *
+     * @param content Body of the http request in byte array.
+     * @param headerSignature Signature value from `X-LINE-Signature` HTTP header
+     * @return True if headerSignature matches signature of the content. False otherwise.
+     */
+    public boolean validateSignature(@NonNull String content, @NonNull String headerSignature) {
+        return validateSignature(bytes(content), headerSignature);
     }
 
     /**
@@ -75,5 +94,18 @@ public class LineSignatureValidator {
         }
     }
 
+    /**
+     * Generate signature value.
+     *
+     * @param content Body of the http request.
+     * @return generated signature value.
+     */
+    public byte[] generateSignature(@NonNull String content) {
+        return generateSignature(bytes(content));
+    }
+
+    private static byte[] bytes(@NonNull final String content) {
+        return content.getBytes(StandardCharsets.UTF_8);
+    }
 }
 
