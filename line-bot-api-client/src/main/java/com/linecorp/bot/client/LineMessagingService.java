@@ -16,6 +16,8 @@
 
 package com.linecorp.bot.client;
 
+import java.util.concurrent.CompletableFuture;
+
 import com.linecorp.bot.model.Multicast;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.ReplyMessage;
@@ -30,6 +32,12 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Streaming;
 
+/**
+ * @deprecated This class too tightly related with network communication library Retrofit2 and uses this async mechanism .
+ * Please use {@link LineMessagingClient} which was build on Java8's {@link CompletableFuture} instead unless you need modify network interceptor configuration.
+ * This class may be moved/removed in future version.
+ */
+@Deprecated
 public interface LineMessagingService {
     /**
      * Reply to messages from users.
@@ -41,7 +49,9 @@ public interface LineMessagingService {
      *
      * @see #pushMessage(PushMessage)
      * @see <a href="https://devdocs.line.me?java#reply-message">//devdocs.line.me#reply-message</a>
+     * @deprecated {@link LineMessagingService}
      */
+    @Deprecated
     @POST("v2/bot/message/reply")
     Call<BotApiResponse> replyMessage(@Body ReplyMessage replyMessage);
 
@@ -52,7 +62,9 @@ public interface LineMessagingService {
      *
      * @see #replyMessage(ReplyMessage)
      * @see <a href="https://devdocs.line.me?java#push-message">//devdocs.line.me#push-message</a>
+     * @deprecated {@link LineMessagingService}
      */
+    @Deprecated
     @POST("v2/bot/message/push")
     Call<BotApiResponse> pushMessage(@Body PushMessage pushMessage);
 
@@ -64,7 +76,9 @@ public interface LineMessagingService {
      * Do not use the LINE ID found on the LINE app.</p>
      * @see #pushMessage(PushMessage)
      * @see <a href="https://devdocs.line.me?java#multicast">//devdocs.line.me#multicast</a>
+     * @deprecated {@link LineMessagingService}
      */
+    @Deprecated
     @POST("v2/bot/message/multicast")
     Call<BotApiResponse> multicast(@Body Multicast multicast);
 
@@ -72,7 +86,9 @@ public interface LineMessagingService {
      * Download image, video, and audio data sent from users.
      *
      * @see <a href="https://devdocs.line.me?java#get-content">//devdocs.line.me#get-content</a>
+     * @deprecated {@link LineMessagingService}
      */
+    @Deprecated
     @Streaming
     @GET("v2/bot/message/{messageId}/content")
     Call<ResponseBody> getMessageContent(@Path("messageId") String messageId);
@@ -81,7 +97,9 @@ public interface LineMessagingService {
      * Get user profile information.
      *
      * @see <a href="https://devdocs.line.me?java#bot-api-get-profile">//devdocs.line.me#bot-api-get-profile</a>
+     * @deprecated {@link LineMessagingService}
      */
+    @Deprecated
     @GET("v2/bot/profile/{userId}")
     Call<UserProfileResponse> getProfile(@Path("userId") String userId);
 
@@ -89,7 +107,9 @@ public interface LineMessagingService {
      * Leave a group.
      *
      * @see <a href="https://devdocs.line.me?java#leave">//devdocs.line.me#leave</a>
+     * @deprecated {@link LineMessagingService}
      */
+    @Deprecated
     @POST("v2/bot/group/{groupId}/leave")
     Call<BotApiResponse> leaveGroup(@Path("groupId") String groupId);
 
@@ -97,7 +117,9 @@ public interface LineMessagingService {
      * Leave a room.
      *
      * @see <a href="https://devdocs.line.me?java#leave">//devdocs.line.me#leave</a>
+     * @deprecated {@link LineMessagingService}
      */
+    @Deprecated
     @POST("v2/bot/room/{roomId}/leave")
     Call<BotApiResponse> leaveRoom(@Path("roomId") String roomId);
 }

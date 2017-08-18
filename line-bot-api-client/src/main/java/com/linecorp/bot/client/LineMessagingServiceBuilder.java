@@ -164,6 +164,7 @@ public final class LineMessagingServiceBuilder {
     /**
      * Creates a new {@link LineMessagingService}.
      */
+    @SuppressWarnings("deprecation")
     public LineMessagingService build() {
         if (okHttpClientBuilder == null) {
             okHttpClientBuilder = new OkHttpClient.Builder();
