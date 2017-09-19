@@ -21,10 +21,8 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,13 +33,13 @@ import com.linecorp.bot.servlet.LineBotCallbackRequestParser;
 import com.linecorp.bot.spring.boot.annotation.LineBotMessages;
 import com.linecorp.bot.spring.boot.support.LineBotServerArgumentProcessor;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
 @Slf4j
+@AllArgsConstructor
 public class LineBotServerInterceptor implements HandlerInterceptor {
-    @Autowired
-    private LineBotCallbackRequestParser lineBotCallbackRequestParser;
+    private final LineBotCallbackRequestParser lineBotCallbackRequestParser;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)

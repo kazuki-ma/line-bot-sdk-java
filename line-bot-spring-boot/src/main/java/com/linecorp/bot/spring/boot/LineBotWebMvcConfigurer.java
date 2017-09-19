@@ -19,7 +19,8 @@ package com.linecorp.bot.spring.boot;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -27,12 +28,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import com.linecorp.bot.spring.boot.interceptor.LineBotServerInterceptor;
 import com.linecorp.bot.spring.boot.support.LineBotServerArgumentProcessor;
 
-@Configuration
+import lombok.AllArgsConstructor;
+
+@Component
+@ConditionalOnWebApplication
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class LineBotWebMvcConfigurer extends WebMvcConfigurerAdapter {
-    @Autowired
-    private LineBotServerInterceptor lineBotServerInterceptor;
-    @Autowired
-    private LineBotServerArgumentProcessor lineBotServerArgumentProcessor;
+    private final LineBotServerInterceptor lineBotServerInterceptor;
+    private final LineBotServerArgumentProcessor lineBotServerArgumentProcessor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

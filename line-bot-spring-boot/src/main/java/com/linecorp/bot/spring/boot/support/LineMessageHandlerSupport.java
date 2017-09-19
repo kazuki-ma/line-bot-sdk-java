@@ -33,6 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,7 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineBotMessages;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,6 +74,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Beta
 @RestController
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Import(ReplyByReturnValueConsumer.Factory.class)
 @ConditionalOnProperty(name = "line.bot.handler.enabled", havingValue = "true", matchIfMissing = true)
 public class LineMessageHandlerSupport {
@@ -82,18 +85,9 @@ public class LineMessageHandlerSupport {
 
     volatile List<HandlerMethod> eventConsumerList;
 
-    @Autowired
-    public LineMessageHandlerSupport(
-            final ReplyByReturnValueConsumer.Factory returnValueConsumerFactory,
-            final ConfigurableApplicationContext applicationContext) {
-        this.returnValueConsumerFactory = returnValueConsumerFactory;
-        this.applicationContext = applicationContext;
-
-        applicationContext.addApplicationListener(event -> {
-            if (event instanceof ContextRefreshedEvent) {
-                refresh();
-            }
-        });
+    @EventListener
+    public void onContextRefreshedEvent(final ContextRefreshedEvent contextRefreshedEvent) {
+        refresh();
     }
 
     @VisibleForTesting

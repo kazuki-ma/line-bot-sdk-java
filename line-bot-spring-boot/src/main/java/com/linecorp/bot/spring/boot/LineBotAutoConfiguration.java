@@ -79,8 +79,9 @@ public class LineBotAutoConfiguration {
 
     @Bean
     @ConditionalOnWebApplication
-    public LineBotServerInterceptor lineBotServerInterceptor() {
-        return new LineBotServerInterceptor();
+    public LineBotServerInterceptor lineBotServerInterceptor(
+            final LineBotCallbackRequestParser lineBotCallbackRequestParser) {
+        return new LineBotServerInterceptor(lineBotCallbackRequestParser);
     }
 
     @Bean
