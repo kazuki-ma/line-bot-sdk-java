@@ -30,8 +30,6 @@ import org.springframework.context.annotation.Import;
 import com.linecorp.bot.client.ChannelTokenSupplier;
 import com.linecorp.bot.client.FixedChannelTokenSupplier;
 import com.linecorp.bot.client.LineMessagingClient;
-import com.linecorp.bot.client.LineMessagingClientImpl;
-import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.client.LineSignatureValidator;
 import com.linecorp.bot.servlet.LineBotCallbackRequestParser;
 import com.linecorp.bot.spring.boot.interceptor.LineBotServerInterceptor;
@@ -47,11 +45,10 @@ public class LineBotAutoConfiguration {
     private LineBotProperties lineBotProperties;
 
     @Bean
-    @SuppressWarnings("deprecation")
-    public com.linecorp.bot.client.LineMessagingService lineMessagingService(
+    public LineMessagingClient lineMessagingClient(
             final ChannelTokenSupplier channelTokenSupplier) {
-        return LineMessagingServiceBuilder
-                .create(channelTokenSupplier)
+        return LineMessagingClient
+                .builder(channelTokenSupplier)
                 .apiEndPoint(lineBotProperties.getApiEndPoint())
                 .connectTimeout(lineBotProperties.getConnectTimeout())
                 .readTimeout(lineBotProperties.getReadTimeout())
@@ -64,13 +61,6 @@ public class LineBotAutoConfiguration {
     public ChannelTokenSupplier channelTokenSupplier() {
         final String channelToken = lineBotProperties.getChannelToken();
         return FixedChannelTokenSupplier.of(channelToken);
-    }
-
-    @Bean
-    public LineMessagingClient lineMessagingClient(
-            @SuppressWarnings("deprecation")
-            final com.linecorp.bot.client.LineMessagingService lineMessagingService) {
-        return new LineMessagingClientImpl(lineMessagingService);
     }
 
     @Bean

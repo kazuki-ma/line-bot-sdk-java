@@ -35,16 +35,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-public class LineMessagingServiceBuilder {
-    public static final String DEFAULT_API_END_POINT = "https://api.line.me/";
-    public static final long DEFAULT_CONNECT_TIMEOUT = 10_000;
-    public static final long DEFAULT_READ_TIMEOUT = 10_000;
-    public static final long DEFAULT_WRITE_TIMEOUT = 10_000;
+class LineMessagingServiceBuilder {
 
-    private String apiEndPoint = DEFAULT_API_END_POINT;
-    private long connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-    private long readTimeout = DEFAULT_READ_TIMEOUT;
-    private long writeTimeout = DEFAULT_WRITE_TIMEOUT;
+    private String apiEndPoint = LineMessagingClientBuilder.DEFAULT_API_END_POINT;
+    private long connectTimeout = LineMessagingClientBuilder.DEFAULT_CONNECT_TIMEOUT;
+    private long readTimeout = LineMessagingClientBuilder.DEFAULT_READ_TIMEOUT;
+    private long writeTimeout = LineMessagingClientBuilder.DEFAULT_WRITE_TIMEOUT;
     private List<Interceptor> interceptors = new ArrayList<>();
 
     private OkHttpClient.Builder okHttpClientBuilder;
@@ -164,7 +160,6 @@ public class LineMessagingServiceBuilder {
     /**
      * Creates a new {@link LineMessagingService}.
      */
-    @SuppressWarnings("deprecation")
     public LineMessagingService build() {
         if (okHttpClientBuilder == null) {
             okHttpClientBuilder = new OkHttpClient.Builder();
