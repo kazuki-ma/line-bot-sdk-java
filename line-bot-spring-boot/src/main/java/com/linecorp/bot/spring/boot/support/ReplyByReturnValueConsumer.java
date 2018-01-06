@@ -98,7 +98,7 @@ class ReplyByReturnValueConsumer implements Consumer<Object> {
         if (throwable == null) {
             log.debug("Reply message success. response = {}", botApiResponse);
         } else {
-            log.warn("Reply message failed: {}", throwable.getMessage(), throwable);
+            log.warn("Reply message failed", throwable);
         }
     }
 

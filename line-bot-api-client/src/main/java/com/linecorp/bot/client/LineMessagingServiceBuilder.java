@@ -192,7 +192,7 @@ public class LineMessagingServiceBuilder {
     private static List<Interceptor> defaultInterceptors(final ChannelTokenSupplier channelTokenSupplier) {
         final Logger slf4jLogger = LoggerFactory.getLogger("com.linecorp.bot.client.wire");
         final HttpLoggingInterceptor httpLoggingInterceptor =
-                new HttpLoggingInterceptor(message -> slf4jLogger.info("{}", message));
+                new HttpLoggingInterceptor(slf4jLogger::info);
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         return Arrays.asList(

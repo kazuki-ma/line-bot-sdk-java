@@ -109,6 +109,8 @@ subprojects {
         testCompile 'org.hibernate:hibernate-validator'
         testCompile 'org.springframework.boot:spring-boot-starter-test' // MockHttpServletRequest
         testCompile 'org.springframework.boot:spring-boot-starter-logging'
+
+        spotbugsPlugins 'jp.skypencil.findbugs.slf4j:bug-pattern:1.2.4@jar'
     }
 
     compileJava.dependsOn(processResources)
