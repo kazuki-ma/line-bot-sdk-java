@@ -39,10 +39,9 @@ import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 
 /**
- * @deprecated Please use {@link LineMessagingClient} instead.
+ * Private since 2017/01 due to don't expose RetrofitInterface. use {@link LineMessagingClient} instead.
  */
-@Deprecated
-public interface LineMessagingService {
+interface LineMessagingService {
     /**
      * Reply to messages from users.
      *
