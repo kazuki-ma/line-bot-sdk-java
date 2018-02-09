@@ -16,8 +16,6 @@
 
 package com.linecorp.bot.client;
 
-import static java.util.Collections.emptyList;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -41,6 +39,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Proxy implementation of {@link LineMessagingClient} to hind internal implementation.
@@ -140,7 +140,7 @@ public class LineMessagingClientImpl implements LineMessagingClient {
     @Override
     public CompletableFuture<BotApiResponse> linkRichMenuIdToUser(
             final String userId, final String richMenuId) {
-        return toBotApiFuture(retrofitImpl.linkRichMenuToUser(userId, richMenuId));
+        return toBotApiFuture(retrofitImpl.linkRichMenuIdToUser(userId, richMenuId));
     }
 
     @Override
@@ -157,7 +157,7 @@ public class LineMessagingClientImpl implements LineMessagingClient {
     public CompletableFuture<BotApiResponse> setRichMenuImage(
             final String richMenuId, final String contentType, final byte[] content) {
         final RequestBody requestBody = RequestBody.create(MediaType.parse(contentType), content);
-        return toBotApiFuture(retrofitImpl.uploadRichMenuImage(richMenuId, requestBody));
+        return toBotApiFuture(retrofitImpl.setRichMenuImage(richMenuId, requestBody));
     }
 
     @Override
@@ -217,7 +217,7 @@ public class LineMessagingClientImpl implements LineMessagingClient {
             } catch (RuntimeException exceptionInConvert) {
                 completeExceptionally(
                         new GeneralLineMessagingException(exceptionInConvert.getMessage(),
-                                                          null, exceptionInConvert));
+                                null, exceptionInConvert));
             }
         }
 

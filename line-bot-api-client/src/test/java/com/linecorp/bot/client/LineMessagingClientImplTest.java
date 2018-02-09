@@ -16,15 +16,6 @@
 
 package com.linecorp.bot.client;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 
 import org.junit.Rule;
@@ -55,6 +46,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 public class LineMessagingClientImplTest {
     private static final byte[] ZERO_BYTES = {};
     private static final BotApiResponse BOT_API_SUCCESS_RESPONSE = new BotApiResponse("", emptyList());
@@ -75,7 +75,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void replyMessageTest() throws Exception {
         whenCall(retrofitMock.replyMessage(any()),
-                 BOT_API_SUCCESS_RESPONSE);
+                BOT_API_SUCCESS_RESPONSE);
         final ReplyMessage replyMessage = new ReplyMessage("token", new TextMessage("Message"));
 
         // Do
@@ -90,7 +90,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void pushMessageTest() throws Exception {
         whenCall(retrofitMock.pushMessage(any()),
-                 BOT_API_SUCCESS_RESPONSE);
+                BOT_API_SUCCESS_RESPONSE);
         final PushMessage pushMessage = new PushMessage("TO", new TextMessage("text"));
 
         // Do
@@ -105,7 +105,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void multicastTest() throws Exception {
         whenCall(retrofitMock.multicast(any()),
-                 BOT_API_SUCCESS_RESPONSE);
+                BOT_API_SUCCESS_RESPONSE);
         final Multicast multicast = new Multicast(singleton("TO"), new TextMessage("text"));
 
         // Do
@@ -120,7 +120,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void getMessageContentTest() throws Exception {
         whenCall(retrofitMock.getMessageContent(any()),
-                 ResponseBody.create(MediaType.parse("image/jpeg"), ZERO_BYTES));
+                ResponseBody.create(MediaType.parse("image/jpeg"), ZERO_BYTES));
 
         // Do
         final MessageContentResponse contentResponse = target.getMessageContent("ID").get();
@@ -136,7 +136,7 @@ public class LineMessagingClientImplTest {
         final UserProfileResponse mockUserProfileResponse =
                 new UserProfileResponse("displayName", "userId", "pictureUrl", "statusMessage");
         whenCall(retrofitMock.getProfile(any()),
-                 mockUserProfileResponse);
+                mockUserProfileResponse);
 
         // Do
         final UserProfileResponse response = target.getProfile("USER_ID").get();
@@ -151,7 +151,7 @@ public class LineMessagingClientImplTest {
         final UserProfileResponse mockUserProfileResponse =
                 new UserProfileResponse("displayName", "userId", "pictureUrl", null);
         whenCall(retrofitMock.getMemberProfile(any(), any(), any()),
-                 mockUserProfileResponse);
+                mockUserProfileResponse);
 
         // Do
         final UserProfileResponse response = target.getGroupMemberProfile("GROUP_ID", "USER_ID").get();
@@ -190,7 +190,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void leaveGroupTest() throws Exception {
         whenCall(retrofitMock.leaveGroup(any()),
-                 BOT_API_SUCCESS_RESPONSE);
+                BOT_API_SUCCESS_RESPONSE);
 
         // Do
         final BotApiResponse botApiResponse = target.leaveGroup("ID").get();
@@ -203,7 +203,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void leaveRoomTest() throws Exception {
         whenCall(retrofitMock.leaveRoom(any()),
-                 BOT_API_SUCCESS_RESPONSE);
+                BOT_API_SUCCESS_RESPONSE);
 
         // Do
         final BotApiResponse botApiResponse = target.leaveRoom("ID").get();
@@ -242,7 +242,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void deleteRichMenuTest() throws Exception {
         whenCall(retrofitMock.deleteRichMenu(any()),
-                 null);
+                null);
 
         // Do
         final BotApiResponse botApiResponse = target.deleteRichMenu("ID").get();
@@ -255,7 +255,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void getRichMenuIdOfUserTest() throws Exception {
         whenCall(retrofitMock.getRichMenuIdOfUser(any()),
-                 RICH_MENU_ID_RESPONSE);
+                RICH_MENU_ID_RESPONSE);
 
         // Do
         final RichMenuIdResponse richMenuIdResponse = target.getRichMenuIdOfUser("ID").get();
@@ -268,14 +268,14 @@ public class LineMessagingClientImplTest {
 
     @Test
     public void linkRichMenuToUserTest() throws Exception {
-        whenCall(retrofitMock.linkRichMenuToUser(any(), any()),
-                 null);
+        whenCall(retrofitMock.linkRichMenuIdToUser(any(), any()),
+                null);
 
         // Do
         final BotApiResponse botApiResponse = target.linkRichMenuIdToUser("USER_ID", "RICH_MENU_ID").get();
 
         // Verify
-        verify(retrofitMock, only()).linkRichMenuToUser("USER_ID", "RICH_MENU_ID");
+        verify(retrofitMock, only()).linkRichMenuIdToUser("USER_ID", "RICH_MENU_ID");
         assertThat(botApiResponse).isEqualTo(BOT_API_SUCCESS_RESPONSE);
 
     }
@@ -283,7 +283,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void unlinkRichMenuIdToUserTest() throws Exception {
         whenCall(retrofitMock.unlinkRichMenuIdFromUser(any()),
-                 null);
+                null);
 
         // Do
         final BotApiResponse botApiResponse = target.unlinkRichMenuIdFromUser("ID").get();
@@ -297,7 +297,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void getRichMenuImageTest() throws Exception {
         whenCall(retrofitMock.getRichMenuImage(any()),
-                 ResponseBody.create(MediaType.parse("image/jpeg"), ZERO_BYTES));
+                ResponseBody.create(MediaType.parse("image/jpeg"), ZERO_BYTES));
 
         // Do
         final MessageContentResponse messageContentResponse = target.getRichMenuImage("ID").get();
@@ -309,8 +309,8 @@ public class LineMessagingClientImplTest {
 
     @Test
     public void uploadRichMenuImageTest() throws Exception {
-        whenCall(retrofitMock.uploadRichMenuImage(any(), any()),
-                 null);
+        whenCall(retrofitMock.setRichMenuImage(any(), any()),
+                null);
 
         // Do
         final BotApiResponse botApiResponse =
@@ -318,7 +318,7 @@ public class LineMessagingClientImplTest {
 
         // Verify
         verify(retrofitMock, only())
-                .uploadRichMenuImage(eq("ID"), any());
+                .setRichMenuImage(eq("ID"), any());
         assertThat(botApiResponse).isEqualTo(BOT_API_SUCCESS_RESPONSE);
 
     }
@@ -326,7 +326,7 @@ public class LineMessagingClientImplTest {
     @Test
     public void getRichMenuListTest() throws Exception {
         whenCall(retrofitMock.getRichMenuList(),
-                 new RichMenuListResponse(emptyList()));
+                new RichMenuListResponse(emptyList()));
 
         // Do
         final RichMenuListResponse richMenuListResponse = target.getRichMenuList().get();
