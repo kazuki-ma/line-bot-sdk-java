@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package com.linecorp.bot.client;
+package com.linecorp.bot.internal;
 
 import static java.util.Collections.singletonMap;
 
@@ -38,8 +38,8 @@ import com.linecorp.bot.model.error.ErrorResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
-class ExceptionConverter implements Function<Response<?>, LineMessagingException> {
-    public static final ObjectReader OBJECT_READER = new ObjectMapper().readerFor(ErrorResponse.class);
+public class ExceptionConverter implements Function<Response<?>, LineMessagingException> {
+    private static final ObjectReader OBJECT_READER = new ObjectMapper().readerFor(ErrorResponse.class);
 
     @Override
     public LineMessagingException apply(Response<?> response) {

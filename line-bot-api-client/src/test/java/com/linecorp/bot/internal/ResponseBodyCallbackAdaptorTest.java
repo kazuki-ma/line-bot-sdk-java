@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package com.linecorp.bot.client;
+package com.linecorp.bot.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -31,9 +31,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import com.linecorp.bot.client.LineMessagingClientImpl.ResponseBodyCallbackAdaptor;
+import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.client.exception.GeneralLineMessagingException;
 import com.linecorp.bot.client.exception.UnauthorizedException;
+import com.linecorp.bot.internal.FutureConverter.ResponseBodyCallbackAdaptor;
 
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;

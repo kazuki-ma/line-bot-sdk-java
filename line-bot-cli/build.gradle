@@ -14,18 +14,7 @@
  * under the License.
  */
 
-package com.example.bot.spring.echo;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
-
-@SpringBootApplication()
-@LineMessageHandler
-public class EchoApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(EchoApplication.class, "");
-    }
-
+dependencies {
+    compile project(':line-bot-spring-boot')
+    compile 'com.google.guava:guava'
 }

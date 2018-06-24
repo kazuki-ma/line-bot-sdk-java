@@ -1,0 +1,10 @@
+spring:
+  main:
+    web-environment: false
+
+logging.level.: WARN
+logging.level.com.linecorp: INFO
+logging.level.com.linecorp.bot.client.wire: WARN
+
+line.bot:
+  handler.enabled: false

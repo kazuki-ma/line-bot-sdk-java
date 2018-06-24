@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package com.linecorp.bot.client;
+package com.linecorp.bot.internal;
 
 import static okhttp3.MediaType.parse;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,8 +29,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import com.linecorp.bot.client.LineMessagingClientImpl.CallbackAdaptor;
 import com.linecorp.bot.client.exception.GeneralLineMessagingException;
+import com.linecorp.bot.internal.FutureConverter.CallbackAdaptor;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

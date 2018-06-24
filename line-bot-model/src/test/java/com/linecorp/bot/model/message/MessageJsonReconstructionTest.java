@@ -4,6 +4,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -11,6 +13,8 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.linecorp.bot.liff.LiffView;
+import com.linecorp.bot.liff.LiffView.Type;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.action.URIAction;
@@ -210,9 +214,9 @@ public class MessageJsonReconstructionTest {
             }
 
             bodyBlock = Box.builder()
-                      .layout(FlexLayout.VERTICAL)
-                      .contents(Arrays.asList(title, review, info))
-                      .build();
+                           .layout(FlexLayout.VERTICAL)
+                           .contents(Arrays.asList(title, review, info))
+                           .build();
         }
 
         final Box footerBlock;
@@ -233,14 +237,24 @@ public class MessageJsonReconstructionTest {
                           .build();
 
             footerBlock = Box.builder()
-                        .layout(FlexLayout.VERTICAL)
-                        .spacing(FlexMarginSize.SM)
-                        .contents(Arrays.asList(spacer, callAction, separator, websiteAction))
-                        .build();
+                             .layout(FlexLayout.VERTICAL)
+                             .spacing(FlexMarginSize.SM)
+                             .contents(Arrays.asList(spacer, callAction, separator, websiteAction))
+                             .build();
         }
 
         final Bubble bubble = Bubble.builder().hero(heroBlock).body(bodyBlock).footer(footerBlock).build();
         test(new FlexMessage("ALT", bubble));
+    }
+
+    @Test
+    public void liffView() throws IOException {
+        final LiffView original = new LiffView(Type.COMPACT, URI.create("https://example.com"));
+        log.info("Original:      {}", original);
+        final String asJson = objectMapper.writeValueAsString(original);
+        log.info("AS JSON:       {}", asJson);
+        final LiffView reconstructed = objectMapper.readValue(asJson, LiffView.class);
+        log.info("Reconstructed: {}", reconstructed);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

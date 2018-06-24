@@ -25,6 +25,7 @@ import org.junit.Test;
 import com.linecorp.bot.client.exception.GeneralLineMessagingException;
 import com.linecorp.bot.client.exception.LineMessagingException;
 import com.linecorp.bot.client.exception.UnauthorizedException;
+import com.linecorp.bot.internal.ExceptionConverter;
 
 import okhttp3.MediaType;
 import okhttp3.Protocol;
