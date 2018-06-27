@@ -18,11 +18,12 @@ package com.linecorp.bot.servlet;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.ByteStreams;
 
 import com.linecorp.bot.client.LineSignatureValidator;
 import com.linecorp.bot.model.event.CallbackRequest;
@@ -33,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LineBotCallbackRequestParser {
+    private static final Pattern NEVER_MATCH_PATTERN = Pattern.compile("\\A");
     private final ObjectMapper objectMapper = ModelObjectMapper.createNewObjectMapper();
     private final LineSignatureValidator lineSignatureValidator;
 
@@ -50,14 +52,17 @@ public class LineBotCallbackRequestParser {
      * Parse request.
      *
      * @param req HTTP servlet request.
+     *
      * @return Parsed result. If there's an error, this method sends response.
+     *
      * @throws LineBotCallbackException There's an error around signature.
      */
     public CallbackRequest handle(HttpServletRequest req) throws LineBotCallbackException, IOException {
         // validate signature
         String signature = req.getHeader("X-Line-Signature");
-        final byte[] json = ByteStreams.toByteArray(req.getInputStream());
-        return handle(signature, new String(json, StandardCharsets.UTF_8));
+        try (Scanner scanner = new Scanner(req.getInputStream()).useDelimiter(NEVER_MATCH_PATTERN)) {
+            return handle(signature, scanner.next());
+        }
     }
 
     /**
@@ -65,7 +70,9 @@ public class LineBotCallbackRequestParser {
      *
      * @param signature X-Line-Signature header.
      * @param payload Request body.
+     *
      * @return Parsed result. If there's an error, this method sends response.
+     *
      * @throws LineBotCallbackException There's an error around signature.
      */
     public CallbackRequest handle(String signature, String payload)
