@@ -16,10 +16,8 @@
 
 package com.linecorp.bot.client;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,159 +27,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
-import lombok.NonNull;
 import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 class LineMessagingServiceBuilder {
-    private String apiEndPoint = LineMessagingClientBuilder.DEFAULT_API_END_POINT;
-    private long connectTimeout = LineMessagingClientBuilder.DEFAULT_CONNECT_TIMEOUT;
-    private long readTimeout = LineMessagingClientBuilder.DEFAULT_READ_TIMEOUT;
-    private long writeTimeout = LineMessagingClientBuilder.DEFAULT_WRITE_TIMEOUT;
-    private List<Interceptor> interceptors = new ArrayList<>();
-
-    private OkHttpClient.Builder okHttpClientBuilder;
-    private Retrofit.Builder retrofitBuilder;
-
-    /**
-     * Create a new {@link LineMessagingServiceBuilder} with specified given fixed channelToken.
-     */
-    public static LineMessagingServiceBuilder create(@NonNull String fixedChannelToken) {
-        return create(FixedChannelTokenSupplier.of(fixedChannelToken));
-    }
-
-    /**
-     * Create a new {@link LineMessagingServiceBuilder} with specified {@link ChannelTokenSupplier}.
-     */
-    public static LineMessagingServiceBuilder create(@NonNull ChannelTokenSupplier channelTokenSupplier) {
-        return new LineMessagingServiceBuilder(defaultInterceptors(channelTokenSupplier));
-    }
-
-    private LineMessagingServiceBuilder(List<Interceptor> interceptors) {
-        this.interceptors.addAll(interceptors);
-    }
-
-    /**
-     * Set apiEndPoint.
-     */
-    public LineMessagingServiceBuilder apiEndPoint(@NonNull String apiEndPoint) {
-        this.apiEndPoint = apiEndPoint;
-        return this;
-    }
-
-    /**
-     * Set connectTimeout in milliseconds.
-     */
-    public LineMessagingServiceBuilder connectTimeout(long connectTimeout) {
-        this.connectTimeout = connectTimeout;
-        return this;
-    }
-
-    /**
-     * Set readTimeout in milliseconds.
-     */
-    public LineMessagingServiceBuilder readTimeout(long readTimeout) {
-        this.readTimeout = readTimeout;
-        return this;
-    }
-
-    /**
-     * Set writeTimeout in milliseconds.
-     */
-    public LineMessagingServiceBuilder writeTimeout(long writeTimeout) {
-        this.writeTimeout = writeTimeout;
-        return this;
-    }
-
-    /**
-     * Add interceptor.
-     */
-    public LineMessagingServiceBuilder addInterceptor(Interceptor interceptor) {
-        this.interceptors.add(interceptor);
-        return this;
-    }
-
-    /**
-     * Add interceptor first.
-     */
-    public LineMessagingServiceBuilder addInterceptorFirst(Interceptor interceptor) {
-        this.interceptors.add(0, interceptor);
-        return this;
-    }
-
-    /**
-     * Remove all interceptors.
-     */
-    public LineMessagingServiceBuilder removeAllInterceptors() {
-        this.interceptors.clear();
-        return this;
-    }
-
-    /**
-     * <p>If you want to use your own setting, specify {@link OkHttpClient.Builder} instance.</p>
-     *
-     * @deprecated use {@link #okHttpClientBuilder(OkHttpClient.Builder, boolean)} instead.
-     */
-    @Deprecated
-    public LineMessagingServiceBuilder okHttpClientBuilder(
-            @NonNull final OkHttpClient.Builder okHttpClientBuilder) {
-        return okHttpClientBuilder(okHttpClientBuilder, false);
-    }
-
-    /**
-     * <p>If you want to use your own setting, specify {@link OkHttpClient.Builder} instance.</p>
-     *
-     * @param resetDefaultInterceptors If true, all default okhttp interceptors ignored.
-     *         You should insert authentication headers yourself.
-     */
-    public LineMessagingServiceBuilder okHttpClientBuilder(
-            @NonNull final OkHttpClient.Builder okHttpClientBuilder,
-            final boolean resetDefaultInterceptors) {
-        this.okHttpClientBuilder = okHttpClientBuilder;
-        if (resetDefaultInterceptors) {
-            this.removeAllInterceptors();
-        }
-        return this;
-    }
-
-    /**
-     * <p>If you want to use your own setting, specify {@link Retrofit.Builder} instance.</p>
-     *
-     * <p>ref: {@link LineMessagingServiceBuilder#createDefaultRetrofitBuilder()} ()}.</p>
-     */
-    public LineMessagingServiceBuilder retrofitBuilder(@NonNull Retrofit.Builder retrofitBuilder) {
-        this.retrofitBuilder = retrofitBuilder;
-        return this;
-    }
-
-    /**
-     * Creates a new {@link LineMessagingService}.
-     */
-    LineMessagingService build() {
-        if (okHttpClientBuilder == null) {
-            okHttpClientBuilder = new OkHttpClient.Builder();
-        }
-
-        interceptors.forEach(okHttpClientBuilder::addInterceptor);
-        okHttpClientBuilder
-                .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
-                .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
-
-        final OkHttpClient okHttpClient = okHttpClientBuilder.build();
-
-        if (retrofitBuilder == null) {
-            retrofitBuilder = createDefaultRetrofitBuilder();
-        }
-        retrofitBuilder.client(okHttpClient);
-        retrofitBuilder.baseUrl(apiEndPoint);
-        final Retrofit retrofit = retrofitBuilder.build();
-
-        return retrofit.create(LineMessagingService.class);
-    }
 
     // TODO: Split this method.
     static List<Interceptor> defaultInterceptors(final ChannelTokenSupplier channelTokenSupplier) {

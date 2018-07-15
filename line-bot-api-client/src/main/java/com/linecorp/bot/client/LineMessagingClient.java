@@ -209,11 +209,18 @@ public interface LineMessagingClient {
      */
     CompletableFuture<RichMenuListResponse> getRichMenuList();
 
-    static LineMessagingClientBuilder builder(String channelToken) {
-        return new LineMessagingClientBuilder(channelToken);
+    static LineMessagingClientBuilder builder() {
+        return new LineMessagingClientBuilder();
     }
 
-    static LineMessagingClientBuilder builder(ChannelTokenSupplier channelTokenSupplier) {
-        return new LineMessagingClientBuilder(channelTokenSupplier);
+    @Deprecated
+    static LineMessagingClientBuilder builder(final String channelToken) {
+        final FixedChannelTokenSupplier channelTokenSupplier = FixedChannelTokenSupplier.of(channelToken);
+        return builder(channelTokenSupplier);
+    }
+
+    @Deprecated
+    static LineMessagingClientBuilder builder(final ChannelTokenSupplier channelTokenSupplier) {
+        return builder().channelTokenSupplier(channelTokenSupplier);
     }
 }
