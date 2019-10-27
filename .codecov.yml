@@ -1,6 +1,8 @@
 codecov:
+  token: 9534930e-db9e-4119-8b73-c6e69ceb44f7
   notify:
     require_ci_to_pass: no
+
 
 ignore:
   - 'line-bot-model/src/test' # Workaround for line-bot-model's test source is wrongly included by coverage report.
