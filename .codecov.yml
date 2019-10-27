@@ -30,10 +30,10 @@ coverage:
 flags:
   line_bot_model:
     paths:
-      - line-bot-model/src
+      - line-bot-model/
   line_bot_api_client:
     paths:
-      - line-bot-api-client/src
+      - line-bot-api-client/
 
 comment:
   layout: "reach, diff, flags, files"
