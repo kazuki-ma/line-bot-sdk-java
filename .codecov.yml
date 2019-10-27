@@ -27,6 +27,14 @@ coverage:
         flags: null
         paths: null
 
+flags:
+  line-bot-model:
+    paths:
+      - line-bot-model/src
+  line-bot-api-client:
+    paths:
+      - line-bot-api-client/src
+
 comment:
   layout: "reach, diff, flags, files"
   behavior: default
