@@ -216,27 +216,23 @@ subprojects {
     }
 }
 
-task codeCoverageReport(type: JacocoReport) {
-    onlyIf = { true }
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-
-    [':line-bot-api-client', ':line-bot-model', ':line-bot-servlet', ':line-bot-spring-boot', ':line-bot-cli'].each {
-        sourceSets(project(it).sourceSets.main)
-    }
-
-    reports {
-        xml.enabled true
-        xml.destination file('reports/jacoco/report.xml')
-        html.enabled true
-        csv.enabled false
-    }
-}
-
 [':line-bot-api-client', ':line-bot-model', ':line-bot-servlet', ':line-bot-spring-boot', ':line-bot-cli'].each { projectName ->
     project(projectName) { project ->
-        apply plugin: 'jacoco'
         apply plugin: 'signing'
         apply plugin: 'maven'
+        apply plugin: 'jacoco'
+        task codeCoverageReport(type: JacocoReport) {
+            onlyIf = { true }
+            executionData file('build/jacoco/test.exec')
+
+            reports {
+                xml.enabled true
+                xml.destination file('build/jacoco/report.xml')
+                html.enabled true
+                csv.enabled false
+            }
+        }
+        codeCoverageReport.dependsOn(test)
 
         signing {
             required { isReleaseBuild }

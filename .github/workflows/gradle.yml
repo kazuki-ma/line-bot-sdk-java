@@ -82,4 +82,9 @@ jobs:
         echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
     - run: ./gradlew -v
     - run: ./gradlew test codeCoverageReport
-    - run:  bash <(curl -s https://codecov.io/bash)
+    - run: |
+        bash <(curl -s https://codecov.io/bash) -f ./line-bot-api-client/build/jacoco/report.xml -F line_bot_api_client
+        bash <(curl -s https://codecov.io/bash) -f ./line-bot-model/build/jacoco/report.xml -F line_bot_model
+        bash <(curl -s https://codecov.io/bash) -f ./line-bot-spring-boot/build/jacoco/report.xml -F line_bot_spring_boot
+        bash <(curl -s https://codecov.io/bash) -f ./line-bot-cli/build/jacoco/report.xml -F line_bot_cli
+        bash <(curl -s https://codecov.io/bash) -f ./line-bot-servlet/build/jacoco/report.xml -F line_bot_servlet

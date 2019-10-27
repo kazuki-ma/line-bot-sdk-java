@@ -28,10 +28,10 @@ coverage:
         paths: null
 
 flags:
-  line-bot-model:
+  line_bot_model:
     paths:
       - line-bot-model/src
-  line-bot-api-client:
+  line_bot_api_client:
     paths:
       - line-bot-api-client/src
 
