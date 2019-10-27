@@ -12,6 +12,17 @@ coverage:
   round: down
   precision: 2
   status:
+    # project:
+    #   line-bot-api-client:
+    #     flags: line_bot_api_client
+    #   line-bot-cli:
+    #     flags: line_bot_cli
+    #   line-bot-model:
+    #     flags: line_bot_model
+    #   line-bot-servlet:
+    #     flags: line_bot_servlet
+    #   line-bot-spring-boot:
+    #     flags: line_bot_spring_boot
     patch:
       default:
         # basic
@@ -27,13 +38,12 @@ coverage:
         flags: null
         paths: null
 
-flags:
-  line_bot_model:
-    paths:
-      - line-bot-model/
-  line_bot_api_client:
-    paths:
-      - line-bot-api-client/
+# flags:
+#   line_bot_api_client.paths: [line-bot-api-client/src/main/]
+#   line_bot_cli.paths: [line-bot-cli/src/main/]
+#   line_bot_model.paths: [line-bot-model/src/main/]
+#   line_bot_servlet.paths: [line-bot-servlet/src/main/]
+#   line_bot_spring_boot.paths: [line-bot-spring-boot/src/main/]
 
 comment:
   layout: "reach, diff, flags, files"

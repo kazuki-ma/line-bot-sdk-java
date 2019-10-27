@@ -19,15 +19,19 @@ jobs:
     - uses: actions/checkout@v1
     - run: |
         mkdir -p ~/.gradle
-        echo "org.gradle.jvmargs=-Xms6g -Xmx6g" >> ~/.gradle/gradle.properties
+        echo "org.gradle.jvmargs=-Xms2g -Xmx2g" >> ~/.gradle/gradle.properties
         echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
     - run: ./gradlew -v
     - run: ./gradlew test codeCoverageReport
-    - run: |
-        bash <(curl -s https://codecov.io/bash) -f ./line-bot-api-client/build/jacoco/report.xml -F line_bot_api_client
-        bash <(curl -s https://codecov.io/bash) -f ./line-bot-model/build/jacoco/report.xml -F line_bot_model
-        bash <(curl -s https://codecov.io/bash) -f ./line-bot-spring-boot/build/jacoco/report.xml -F line_bot_spring_boot
-        bash <(curl -s https://codecov.io/bash) -f ./line-bot-cli/build/jacoco/report.xml -F line_bot_cli
-        bash <(curl -s https://codecov.io/bash) -f ./line-bot-servlet/build/jacoco/report.xml -F line_bot_servlet
+    - run: bash <(curl -s https://codecov.io/bash) -f ./line-bot-api-client/build/jacoco/report.xml
       env:
         CODECOV_TOKEN: 9534930e-db9e-4119-8b73-c6e69ceb44f7
+    # - run: |
+    #     bash <(curl -s https://codecov.io/bash) -f ./line-bot-api-client/build/jacoco/report.xml
+    #     bash <(curl -s https://codecov.io/bash) -f ./line-bot-api-client/build/jacoco/report.xml  -F line_bot_api_client
+    #     bash <(curl -s https://codecov.io/bash) -f ./line-bot-cli/build/jacoco/report.xml         -F line_bot_cli
+    #     bash <(curl -s https://codecov.io/bash) -f ./line-bot-model/build/jacoco/report.xml       -F line_bot_model
+    #     bash <(curl -s https://codecov.io/bash) -f ./line-bot-servlet/build/jacoco/report.xml     -F line_bot_servlet
+    #     bash <(curl -s https://codecov.io/bash) -f ./line-bot-spring-boot/build/jacoco/report.xml -F line_bot_spring_boot
+    #   env:
+    #     CODECOV_TOKEN: 9534930e-db9e-4119-8b73-c6e69ceb44f7
