@@ -31,8 +31,8 @@ buildscript {
         maven { url 'https://repo.spring.io/plugins-release' }
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
-        classpath 'com.puppycrawl.tools:checkstyle:8.29'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.28.0'
+        classpath 'com.puppycrawl.tools:checkstyle:8.30'
         classpath 'gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:2.0.0'
         classpath 'io.franzbecker:gradle-lombok:3.3.0'
         classpath 'io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE'
@@ -83,7 +83,7 @@ subprojects {
     version = rootProject.version
 
     ext['guava.version'] = '28.2-jre'
-    ext['retrofit.version'] = '2.6.1'
+    ext['retrofit.version'] = '2.7.2'
 
     dependencyManagement {
         imports {
@@ -116,11 +116,13 @@ subprojects {
     // http://docs.spring.io/spring-boot/docs/current/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor
 
     def springManagedModules = [
-        'org.springframework',
         'com.fasterxml.jackson',
+        'com.squareup.okhttp3',
+        'javax.servlet',
         'javax.validation',
         'org.hibernate',
-        'javax.servlet'
+        'org.springframework',
+        'org.yaml'
     ];
     dependencyUpdates.resolutionStrategy {
         componentSelection { rules ->
@@ -149,7 +151,7 @@ subprojects {
     }
 
     lombok {
-        version = '1.18.8'
+        version = '1.18.12'
     }
 
     if (!project.name.startsWith('sample-') && !project.name.startsWith('test-')) {
